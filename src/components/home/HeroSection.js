@@ -9,43 +9,7 @@ const HeroSection = () => {
 
   useEffect(() => {
     setLoaded(true);
-    
-    // Add particles effect
-    const createParticle = () => {
-      const heroSection = document.querySelector('.hero-section');
-      if (!heroSection) return;
-      
-      const particle = document.createElement('div');
-      particle.classList.add('particle');
-      
-      // Random position
-      const left = Math.random() * 100;
-      const top = Math.random() * 100;
-      
-      // Random size
-      const size = Math.random() * 8 + 2;
-      
-      // Styling
-      particle.style.left = `${left}%`;
-      particle.style.top = `${top}%`;
-      particle.style.width = `${size}px`;
-      particle.style.height = `${size}px`;
-      particle.style.opacity = Math.random() * 0.6 + 0.2;
-      
-      // Add to DOM
-      heroSection.appendChild(particle);
-      
-      // Remove after animation completes
-      setTimeout(() => {
-        particle.remove();
-      }, 10000);
-    };
-    
-    const particleInterval = setInterval(createParticle, 300);
-    
-    return () => {
-      clearInterval(particleInterval);
-    };
+    // Remove the particle creation functionality
   }, []);
 
   // Reversed order for desktop - logo on left, text on right
@@ -55,9 +19,29 @@ const HeroSection = () => {
       <div className="absolute top-0 left-0 w-64 h-64 bg-[#D88A22]/20 rounded-full blur-3xl -translate-y-1/2"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#D88A22]/10 rounded-full blur-3xl translate-y-1/3"></div>
       
+      {/* Add pre-made particles instead of creating them dynamically */}
+      <div className="particles-container absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Create a fixed number of particles */}
+        {[...Array(15)].map((_, i) => (
+          <div 
+            key={i} 
+            className="particle" 
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${Math.random() * 8 + 2}px`,
+              height: `${Math.random() * 8 + 2}px`,
+              opacity: Math.random() * 0.6 + 0.2,
+              animationDelay: `${Math.random() * 10}s`,
+              animationDuration: `${Math.random() * 10 + 10}s`
+            }}
+          />
+        ))}
+      </div>
+      
       <div className="container relative z-10 mx-auto px-4 py-20 md:py-32">
         <div className="flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-8">
-          {/* Logo/Image Section - Left on desktop - REMOVED BACKGROUND ANIMATION */}
+          {/* Logo/Image Section */}
           <div className={`lg:w-2/5 flex justify-center items-center transition-all duration-1000 ${
             loaded ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-20'
           }`}>
@@ -80,6 +64,7 @@ const HeroSection = () => {
           <div className={`lg:w-3/5 transition-all duration-1000 ${
             loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}>
+            {/* Rest of your text content remains the same */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
               <span className="inline-block">The</span>{' '}
               <span className="inline-block text-[#D88A22] font-extrabold">#1 Job Board</span>{' '}
@@ -94,6 +79,7 @@ const HeroSection = () => {
               Where Schools Hire & Instructors Find Work
             </p>
             
+            {/* Button group */}
             <div className="flex flex-col sm:flex-row gap-5">
               <Button 
                 href="/post-job" 
@@ -131,10 +117,10 @@ const HeroSection = () => {
         </div>
       </div>
       
-      {/* CSS for particles */}
+      {/* CSS for particles - optimized */}
       <style jsx>{`
-        .hero-section {
-          position: relative;
+        .particles-container {
+          z-index: 1;
         }
         
         .particle {
@@ -142,7 +128,8 @@ const HeroSection = () => {
           background-color: rgba(216, 138, 34, 0.4);
           border-radius: 50%;
           pointer-events: none;
-          animation: float 10s infinite ease-in-out;
+          will-change: transform;
+          animation: float 20s infinite ease-in-out;
         }
         
         @keyframes float {
