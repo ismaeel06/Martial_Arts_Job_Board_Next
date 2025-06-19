@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const JobCard = ({ 
+  id,
   title, 
   company, 
   location, 
@@ -11,7 +13,8 @@ const JobCard = ({
   jobType, 
   postedAt, 
   logo,
-  style = 'karate' // karate, judo, bjj, muaythai, etc.
+  style = 'karate', // karate, judo, bjj, muaythai, etc.
+  featured = false
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   
@@ -39,16 +42,23 @@ const JobCard = ({
   
   const icon = styleIcons[style.toLowerCase()] || '🥋';
   const badgeColor = styleBadgeColors[style.toLowerCase()] || 'bg-gray-50 text-gray-700 border-gray-200';
-  
-  return (
-    <div 
+    return (
+    <Link 
+      href={`/jobs/${id}`}
       className={`
-        bg-white rounded-xl border border-gray-100 transition-all duration-300
+        block bg-white rounded-xl border border-gray-100 transition-all duration-300
         ${isHovered ? 'shadow-lg shadow-[#D88A22]/10 transform -translate-y-1' : 'shadow-md shadow-gray-100/60'}
+        ${featured ? 'relative ring-2 ring-[#D88A22]/20' : ''}
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {featured && (
+        <span className="absolute -top-3 right-4 bg-[#D88A22] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
+          Featured
+        </span>
+      )}
+    
       {/* Top accent line */}
       <div className="h-1 w-full bg-gradient-to-r from-[#D88A22] to-[#D88A22]/10 rounded-t-xl"></div>
       
@@ -130,11 +140,10 @@ const JobCard = ({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
-            </span>
-          </button>
+            </span>          </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
