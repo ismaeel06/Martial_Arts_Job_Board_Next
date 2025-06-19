@@ -6,6 +6,61 @@ import JobCard from '@/components/jobs/JobCard';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
 
+// API base URL - would be set from environment variables in real app
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.martialartsjoboard.com';
+
+/**
+ * Job listing service functions for API integration
+ */
+const JobService = {
+  // Get job listings with filters and pagination
+  getJobs: async (params) => {
+    try {
+      const queryParams = new URLSearchParams();
+      
+      // Add search parameters if they exist
+      if (params.searchQuery) queryParams.append('search', params.searchQuery);
+      if (params.location) queryParams.append('location', params.location);
+      if (params.martialArtStyle) queryParams.append('style', params.martialArtStyle);
+      if (params.jobType) queryParams.append('jobType', params.jobType);
+      
+      // Add pagination parameters
+      queryParams.append('page', params.page || 1);
+      queryParams.append('limit', params.limit || 10);
+      
+      // Make the API request
+      const response = await fetch(`${API_BASE_URL}/api/jobs?${queryParams}`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch jobs');
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
+      throw error;
+    }
+  },
+  
+  // Get featured job listings
+  getFeaturedJobs: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/jobs/featured`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch featured jobs');
+      }
+      
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching featured jobs:', error);
+      throw error;
+    }
+  }
+};
+
 const FindJobsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [location, setLocation] = useState('');
@@ -14,6 +69,15 @@ const FindJobsPage = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [isFilterVisible, setIsFilterVisible] = useState(true);
 //   const [isSticky, setIsSticky] = useState(false);
+
+  // Add these state variables for API integration
+  const [jobListings, setJobListings] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalJobs, setTotalJobs] = useState(0);
+  
   const filterRef = useRef(null);
   
   // Monitor scroll position for sticky filters
@@ -28,9 +92,52 @@ const FindJobsPage = () => {
 //     window.addEventListener('scroll', handleScroll);
 //     return () => window.removeEventListener('scroll', handleScroll);
 //   }, []);
+  /**
+   * Effect for API data fetching
+   */
+  useEffect(() => {
+    // Function to fetch jobs from the API
+    const fetchJobs = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // IMPORTANT: Remove this condition and use the API call when backend is ready
+        if (process.env.NODE_ENV === 'production' && false) { // <-- Change this condition when ready
+          const result = await JobService.getJobs({
+            searchQuery,
+            location,
+            martialArtStyle,
+            jobType,
+            page: currentPage,
+            limit: 10
+          });
+          
+          setJobListings(result.jobs);
+          setTotalPages(result.totalPages);
+          setTotalJobs(result.totalJobs);
+        } else {
+          // Mock data for development - REMOVE THIS WHEN BACKEND IS READY
+          // Simulate API response delay
+          await new Promise(resolve => setTimeout(resolve, 500));
+          setJobListings(mockJobListings);
+          setTotalPages(1);
+          setTotalJobs(mockJobListings.length);
+        }
+      } catch (err) {
+        setError('Failed to load job listings. Please try again later.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchJobs();
+  }, [searchQuery, location, martialArtStyle, jobType, currentPage]);
   
   // Sample job listings data - in a real app, this would come from an API
-  const jobListings = [
+  // REMOVE THIS BLOCK WHEN IMPLEMENTING REAL API INTEGRATION
+  const mockJobListings = [
     {
       id: 1,
       title: 'Head Karate Instructor',
@@ -147,10 +254,37 @@ const FindJobsPage = () => {
     setMartialArtStyle('');
     setJobType('');
   };
-
   const handleSearch = (e) => {
     e.preventDefault();
-    // In a real app, this would trigger an API call with the search parameters
+    // This would trigger an API call with the search parameters in a real app
+    // Currently it just filters the mock data, but when connected to backend API:
+    /*
+    const fetchFilteredJobs = async () => {
+      setIsLoading(true);
+      try {
+        const result = await JobService.getJobs({
+          searchQuery,
+          location,
+          martialArtStyle,
+          jobType,
+          page: 1, // Reset to first page when searching
+          limit: 10
+        });
+        
+        setJobListings(result.jobs);
+        setTotalPages(result.totalPages);
+        setTotalJobs(result.totalJobs);
+        setCurrentPage(1);
+      } catch (err) {
+        setError('Failed to load job listings. Please try again later.');
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchFilteredJobs();
+    */
   };
 
   return (
@@ -255,7 +389,7 @@ const FindJobsPage = () => {
             title="List view"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
             </svg>
           </button>
         </div>
@@ -270,7 +404,7 @@ const FindJobsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Search Input */}
           <div className="space-y-2">
-            <label htmlFor="searchQuery" className="block text-sm font-medium text-gray-700 flex items-center">
+            <label htmlFor="searchQuery" className="text-sm font-medium text-gray-700 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -301,7 +435,7 @@ const FindJobsPage = () => {
           
           {/* Location Input */}
           <div className="space-y-2">
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700 flex items-center">
+            <label htmlFor="location" className="text-sm font-medium text-gray-700 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -333,7 +467,7 @@ const FindJobsPage = () => {
           
           {/* Martial Arts Style Select */}
           <div className="space-y-2">
-            <label htmlFor="martialArtStyle" className="block text-sm font-medium text-gray-700 flex items-center">
+            <label htmlFor="martialArtStyle" className="text-sm font-medium text-gray-700 flex items-center">
               <span className="mr-1.5 text-gray-500 text-base">🥋</span>
               Martial Art Style
             </label>
@@ -364,7 +498,7 @@ const FindJobsPage = () => {
           
           {/* Job Type Select */}
           <div className="space-y-2">
-            <label htmlFor="jobType" className="block text-sm font-medium text-gray-700 flex items-center">
+            <label htmlFor="jobType" className="text-sm font-medium text-gray-700 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
@@ -512,24 +646,57 @@ const FindJobsPage = () => {
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-4">
           <div className="max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-8 border-b border-gray-200 pb-4">
-              <h2 className="text-xl font-bold">
-                <span className="text-[#D88A22]">{filteredJobs.length}</span> Job Openings
-              </h2>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">
-                  Sort by:
-                </span>
-                <select className="text-sm border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-700 font-medium">
-                  <option value="recent">Most Recent</option>
-                  <option value="salary">Highest Salary</option>
-                  <option value="relevance">Relevance</option>
-                </select>
+            {/* Loading state */}
+            {isLoading && (
+              <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D88A22]"></div>
               </div>
-            </div>
+            )}
+            
+            {/* Error state */}
+            {error && (
+              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Job listing header */}
+            {!isLoading && !error && (
+              <div className="flex items-center justify-between mb-8 border-b border-gray-200 pb-4">
+                <h2 className="text-xl font-bold">
+                  <span className="text-[#D88A22]">{totalJobs || filteredJobs.length}</span> Job Openings
+                </h2>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">
+                    Sort by:
+                  </span>
+                  <select 
+                    className="text-sm border-0 bg-transparent focus:outline-none focus:ring-0 text-gray-700 font-medium"
+                    // When using API, uncomment:
+                    // onChange={(e) => {
+                    //   // Set sorting parameter and refetch data
+                    //   setSorting(e.target.value);
+                    // }}
+                  >
+                    <option value="recent">Most Recent</option>
+                    <option value="salary">Highest Salary</option>
+                    <option value="relevance">Relevance</option>
+                  </select>
+                </div>
+              </div>
+            )}
             
             {/* Job Cards */}
-            {filteredJobs.length > 0 ? (
+            {!isLoading && !error && (filteredJobs.length > 0 ? (
               <div className={`grid grid-cols-1 ${viewMode === 'grid' && 'md:grid-cols-2'} gap-6 mb-8`}>
                 {filteredJobs.map((job) => (
                   <JobCard key={job.id} {...job} />
@@ -553,132 +720,93 @@ const FindJobsPage = () => {
                   Clear All Filters
                 </Button>
               </div>
-            )}
+            ))}
             
             {/* Pagination */}
-            {filteredJobs.length > 0 && (
+            {!isLoading && !error && filteredJobs.length > 0 && (
               <div className="flex flex-col md:flex-row justify-between items-center mt-8 gap-4">
                 <div className="text-sm text-gray-500">
-                  Showing <span className="font-medium">1-{filteredJobs.length}</span> of <span className="font-medium">{filteredJobs.length}</span> jobs
+                  {/* Update this to use API pagination data when connected to a backend */}
+                  Showing <span className="font-medium">1-{filteredJobs.length}</span> of <span className="font-medium">{totalJobs || filteredJobs.length}</span> jobs
                 </div>
                 
                 <div className="flex items-center gap-2">
-                  <button className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50" disabled>
+                  <button 
+                    className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50" 
+                    disabled={currentPage <= 1}
+                    // When using API, uncomment:
+                    // onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  >
                     Previous
                   </button>
-                  <button className="px-3 py-2 bg-gray-200 rounded-md font-medium">
+                  
+                  {/* When using API, replace this with dynamic page buttons */}
+                  <button className="px-3 py-2 bg-[#D88A22] text-white border border-[#D88A22] rounded-md">
                     1
                   </button>
-                  <button className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50" disabled>
+                  
+                  {/* Uncomment and customize this when connecting to a backend */}
+                  {/*
+                    // Generate page buttons based on totalPages from API
+                    Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      // Show current page and surrounding pages
+                      const pageNum = i + 1;
+                      return (
+                        <button
+                          key={pageNum}
+                          className={`px-3 py-2 border rounded-md ${
+                            currentPage === pageNum 
+                              ? 'bg-[#D88A22] text-white border-[#D88A22]' 
+                              : 'border-gray-300 hover:bg-gray-50'
+                          }`}
+                          onClick={() => setCurrentPage(pageNum)}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })
+                  */}
+                  
+                  <button 
+                    className="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50"                    disabled={currentPage >= totalPages} 
+                    // When using API, uncomment:
+                    // onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  >
                     Next
                   </button>
                 </div>
               </div>
             )}
-            
-            {/* Job Alert Signup */}
-            <div className="mt-12 p-6 bg-gradient-to-r from-gray-900 to-black rounded-xl text-white shadow-xl">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                  <h3 className="text-xl font-bold mb-2 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-[#D88A22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                    </svg>
-                    Get Job Alerts
-                  </h3>
-                  <p className="text-gray-300">
-                    Stay updated with new martial arts teaching opportunities matching your skills
-                  </p>
-                </div>
-                <div className="w-full md:w-auto">
-                  <div className="flex">
-                    <input 
-                      type="email" 
-                      placeholder="Enter your email" 
-                      className="px-4 py-2 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#D88A22] text-gray-800 min-w-[200px]" 
-                    />
-                    <Button 
-                      variant="primary" 
-                      className="rounded-l-none"
-                    >
-                      Sign Up
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
       
-      {/* CTA Section */}
-      <section className="bg-gradient-to-br from-[#D88A22] to-[#c47a1c] text-white py-20 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{ 
-            backgroundImage: 'url("/images/pattern-martial-arts.svg")', 
-            backgroundSize: '200px',
-            backgroundRepeat: 'repeat',
-            transform: 'rotate(45deg)'
-          }}></div>
-        </div>
-        
-        {/* Decoration */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
-        
-        <div className="container mx-auto px-4 relative z-10">
+      {/* Email Alerts Section */}
+      <section className="bg-[#f5f0e8] py-12 border-t border-[#e8d9c1]">
+        <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <span className="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm font-medium mb-4">
-              For School Owners
+            <span className="inline-block bg-white/30 text-[#b36d19] text-sm px-4 py-1.5 rounded-full font-medium mb-5">
+              Never Miss an Opportunity
             </span>
-            <h2 className="text-4xl font-bold mb-4">
-              Find Your Next Great Instructor
-            </h2>
-            <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-              Post your job on Martial Arts Job Board to reach thousands of qualified martial arts instructors nationwide
+            <h2 className="text-3xl font-bold text-gray-800 mb-3">Get Job Alerts</h2>
+            <p className="text-gray-600 mb-8">
+              Sign up to receive personalized job notifications based on your preferences. We'll email you when new opportunities match your criteria.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button 
-                href="/post-job" 
-                variant="light" 
-                size="lg"
-                className="shadow-lg"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Post a Job
-              </Button>
-              <Button 
-                href="/pricing" 
-                variant="outline-light" 
-                size="lg"
-              >
-                View Pricing
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex-grow max-w-sm">
+                <input 
+                  type="email" 
+                  className="w-full px-5 py-3.5 text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D88A22]/50 focus:border-[#D88A22]"
+                  placeholder="Your email address"
+                />
+              </div>
+              <Button variant="primary">
+                Subscribe to Alerts
               </Button>
             </div>
-            
-            <div className="mt-12 flex items-center justify-center gap-8 text-sm font-medium">
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                30-day listings
-              </div>
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Targeted audience
-              </div>
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Quality applicants
-              </div>
-            </div>
+            <p className="text-xs text-gray-500 mt-4">
+              By subscribing, you agree to our privacy policy. You can unsubscribe at any time.
+            </p>
           </div>
         </div>
       </section>

@@ -18,6 +18,7 @@ const Button = ({
     secondary: "bg-transparent border-2 border-white text-white hover:border-[#D88A22] hover:text-[#D88A22] focus:ring-white/50 active:scale-95",
     outline: "bg-transparent border-2 border-[#D88A22] text-[#D88A22] hover:bg-[#D88A22]/10 focus:ring-[#D88A22]/30 active:scale-95",
     ghost: "bg-transparent text-gray-800 hover:bg-gray-100 focus:ring-gray-300 active:scale-95",
+    contact: "bg-transparent text-[#D88A22] border border-[#D88A22] hover:bg-[#D88A22] hover:text-white focus:ring-[#D88A22]/50 active:scale-95 shadow-sm",
   };
   
   const sizeClasses = {
