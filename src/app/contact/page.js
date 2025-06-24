@@ -158,7 +158,7 @@ const ContactPage = () => {
               <div className="bg-gray-50 p-8 rounded-lg shadow-sm h-full">
                 <div className="flex items-center mb-8">
                   <Image 
-                    src="/icon.svg" 
+                    src="/icon.png" 
                     alt="MartialArtsJobsBoard.com"
                     width={50}
                     height={50}

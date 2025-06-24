@@ -11,7 +11,7 @@ const Footer = () => {
           <div>
             <Link href="/" className="flex items-center mb-4">
               <Image
-                src="/icon.svg"
+                src="/icon.png"
                 alt="MartialArtsJobsBoard.com"
                 width={40}
                 height={40}
