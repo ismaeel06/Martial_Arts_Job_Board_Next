@@ -13,19 +13,19 @@ const AboutPage = () => {
       name: 'David Chen',
       role: 'Founder & CEO',
       bio: '4th Dan Black Belt in Taekwondo with 15 years running martial arts academies. Founded MartialArtsJobsBoard.com to solve hiring challenges he experienced firsthand.',
-      image: '/icon.svg' // Placeholder - would be replaced with actual team member images
+      image: '/icon.png' // Placeholder - would be replaced with actual team member images
     },
     {
       name: 'Sarah Johnson',
       role: 'Head of Operations',
       bio: 'BJJ Purple Belt and former HR Director. Expert in matching martial arts schools with qualified instructors through data-driven approaches.',
-      image: '/icon.svg' 
+      image: '/icon.png' 
     },
     {
       name: 'Michael Tanaka',
       role: 'Technical Director',
       bio: 'Judo Black Belt and software engineer who built our platform from the ground up with focus on user experience and powerful filtering tools.',
-      image: '/icon.svg'
+      image: '/icon.png'
     }
   ];
 
@@ -34,13 +34,13 @@ const AboutPage = () => {
       quote: "We found our head instructor within just 3 days of posting. The quality of applicants was far better than what we've seen on general job sites.",
       author: "James Lee",
       role: "Owner, Dragon Karate Academy",
-      image: '/icon.svg'
+      image: '/icon.png'
     },
     {
       quote: "The video application feature is a game-changer. Being able to see teaching style before interviews saved us so much time in our hiring process.",
       author: "Michelle Rodriguez",
       role: "Director, Elite MMA Center",
-      image: '/icon.svg'
+      image: '/icon.png'
     }
   ];
 
@@ -88,7 +88,7 @@ const AboutPage = () => {
                   <div className="text-center mb-6">
                     <div className="inline-block bg-white p-3 rounded-full shadow-md mb-4">
                       <Image
-                        src="/icon.svg"
+                        src="/icon.png"
                         alt="MartialArtsJobsBoard.com"
                         width={60}
                         height={60}
@@ -129,11 +129,58 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Team Section */}
+            {/* Team Section - Modified to single founder with image left, text right */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-4">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-4">Meet Our Founder</h2>
+            <div className="h-1 w-24 bg-[#D88A22] mx-auto"></div>
+          </div>
+
+          <div className="max-w-5xl mx-auto">
+            <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-xl overflow-hidden">
+    {/* Left: Founder Image */}
+    <div className="md:w-2/5 flex items-center justify-center p-8">
+      <div className="relative">
+        <div className="absolute rounded-xl bg-[#D88A22] opacity-30"  style={{ 
+    top: "-8px", 
+    left: "-8px", 
+    right: "-8px", 
+    bottom: "-4px"
+  }}></div>
+        <div className="relative p-2 inline-block bg-white rounded-xl border-gray-300">
+          <Image
+            src="/founder.png"
+            alt="Robert Torres"
+            width={260}
+            height={260}
+            className="rounded-lg object-cover"
+            style={{ height: 'auto' }}
+          />
+        </div>
+      </div>
+    </div>
+              {/* Right: Founder Bio */}
+              <div className="md:w-3/5 p-8 flex flex-col justify-center">
+                <h3 className="text-2xl font-bold mb-2">Robert Torres</h3>
+                <p className="text-[#D88A22] font-medium mb-4">Founder & CEO</p>
+                <p className="text-gray-600 mb-4">
+7th Degree Black Belt. 20+ years building, scaling, and coaching martial arts schools. Robert Torres created MartialArtsJobsBoard.com to solve the biggest challenge every school faces: hiring reliable, qualified instructors. 
+                </p>
+                <p className="text-gray-600">
+                This platform bridges that gap, connecting schools with passionate instructors to build rock-solid teams for long-term success.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> 
+
+      {/* Team Section */}
+      {/* <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
+            <h2 className="text-3xl font-bold mb-4">Meet Our Founder</h2>
             <div className="h-1 w-24 bg-[#D88A22] mx-auto"></div>
           </div>
 
@@ -158,7 +205,7 @@ const AboutPage = () => {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Testimonials */}
       <section className="py-20 bg-black text-white">
