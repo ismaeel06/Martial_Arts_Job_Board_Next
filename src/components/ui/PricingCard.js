@@ -34,14 +34,14 @@ const PricingCard = ({
         className={`
           bg-white rounded-xl shadow-lg transition-all overflow-hidden
           hover:shadow-xl duration-300 flex flex-col h-full
-          ${recommended ? 'border-2 border-[#D88A22] mt-4' : 'border border-gray-100'}
+          ${recommended ? 'border-2 border-[#D88A22] mt-' : 'border border-gray-100'}
           ${isHovered ? 'transform -translate-y-2' : ''}
         `}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
         {/* Background accent */}
-        <div className={`absolute top-0 left-0 right-0 h-20 opacity-5 transition-opacity duration-300 ${isHovered && 'opacity-10'}`}>
+        <div className={`absolute top-0 left-0 right-0 h-24 opacity-5 transition-opacity duration-300 ${isHovered && 'opacity-10'}`}>
           {recommended ? (
             <div className="absolute inset-0 bg-[#D88A22]"></div>
           ) : (
@@ -51,7 +51,7 @@ const PricingCard = ({
         
         <div className="relative p-8">
           {/* Plan Name */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-8">
             <h3 className="text-2xl font-bold">{name}</h3>
             {billingCycle === 'yearly' && savings > 0 && (
               <div className="bg-green-50 text-green-700 text-xs px-2 py-1 rounded-md border border-green-100">

@@ -107,8 +107,24 @@ const PostJobPage = () => {
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-6">Choose Your Plan</h2>
+                              {/* Urgency Banner */}
+    <div className="max-w-3xl mx-auto mb-8 bg-orange-50 border border-orange-200 rounded-lg p-4 shadow-sm">
+      <div className="flex items-center mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-orange-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span className="text-base font-bold text-gray-900">
+          We are opening enrollment for only 17 Founding Member Schools.
+        </span>
+      </div>
+      <p className="text-sm text-gray-700 ml-9">
+        Lock in lifetime discounted pricing before our national launch. Your rate will never increase as long as you remain active.
+      </p>
+    </div> 
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+ 
               {/* Starter Plan */}
               <div 
                 className={`

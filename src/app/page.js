@@ -4,6 +4,7 @@ import HowItWorksSection from '@/components/home/HowItWorksSection';
 import PricingSection from '@/components/home/PricingSection';
 import FeaturedJobsSection from '@/components/home/FeaturedJobsSection';
 import CTASection from '@/components/home/CTASection';
+import TrustedByBar from '@/components/home/TrustedByBar';
 
 export const metadata = {
   title: 'MartialArtsJobsBoard.com | Where Schools Hire & Instructors Find Work',
@@ -14,6 +15,7 @@ export default function Home() {
   return (
     <MainLayout>
       <HeroSection />
+      <TrustedByBar />
       <HowItWorksSection />
       <FeaturedJobsSection />
       <PricingSection />

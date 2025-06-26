@@ -55,7 +55,7 @@ const PricingPage = () => {
       recommended: true,
     },
     {
-      name: 'Unlimited',
+      name: 'Elite Hiring Pro',
       price: billingCycle === 'monthly' ? '125' : calculateAnnualPrice(125).toString(),
       description: 'For schools with continuous hiring needs',
       features: [
@@ -68,7 +68,7 @@ const PricingPage = () => {
         'Featured employer profile',
         'Candidate talent pool access'
       ],
-      cta: 'Start Unlimited',
+      cta: 'Start Elite Hiring Pro',
       ctaLink: `/post-job?plan=unlimited&billing=${billingCycle}`,
     }
   ];
@@ -76,19 +76,19 @@ const PricingPage = () => {
   const frequentlyAskedQuestions = [
     {
       question: 'How long will my job listing remain active?',
-      answer: 'Starter listings remain active for 30 days, Featured listings for 60 days, and Unlimited plan subscribers can post jobs that remain active until filled or for up to 90 days per listing.'
+      answer: 'Starter listings remain active for 30 days, Featured listings for 60 days, and Elite Hiring Pro plan subscribers can post jobs that remain active until filled or for up to 90 days per listing.'
     },
     {
       question: 'What happens when I receive applications?',
-      answer: 'You\'ll receive email notifications when candidates apply. With Featured and Unlimited plans, you can also manage applications through your dashboard and review teaching demo videos.'
+      answer: 'You\'ll receive email notifications when candidates apply. With Featured and Elite Hiring Pro plans, you can also manage applications through your dashboard and review teaching demo videos.'
     },
     {
       question: 'Can I upgrade my plan later?',
-      answer: 'Yes! You can upgrade from Starter to Featured at any time. To upgrade to Unlimited, contact our support team.'
+      answer: 'Yes! You can upgrade from Starter to Featured at any time. To upgrade to Elite Hiring Pro, contact our support team.'
     },
     {
       question: 'Do you offer refunds if I don\'t find a candidate?',
-      answer: 'We don\'t offer refunds for individual job postings, but we do offer a satisfaction guarantee for Unlimited plan subscribers. Contact support for details.'
+      answer: 'We don\'t offer refunds for individual job postings, but we do offer a satisfaction guarantee for Elite Hiring Pro plan subscribers. Contact support for details.'
     },
     {
       question: 'What types of martial arts schools use your platform?',
@@ -164,6 +164,21 @@ const PricingPage = () => {
               </div>
             </div>
           </div>
+
+            {/* Urgency Banner */}
+  <div className="max-w-3xl mx-auto mb-8 bg-gradient-to-r from-red-50 to-orange-50 border-l-4 border-[#D88A22] rounded-lg p-4 shadow-md">
+    <div className="flex items-center mb-2">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#D88A22] mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span className="text-lg font-bold text-gray-900">
+We are opening enrollment for only 17 Founding Member Schools.
+      </span>
+    </div>
+    <p className="text-base text-gray-800 ml-9">
+      Lock in lifetime discounted pricing before our national launch. Your rate will never increase as long as you remain active.
+    </p>
+  </div>
           
           {/* Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -303,7 +318,7 @@ const PricingPage = () => {
                       </div>
                     </th>
                     <th className="px-6 py-5 text-center border-b">
-                      <span className="text-lg font-bold">Unlimited</span>
+                      <span className="text-lg font-bold">Elite Hiring Pro</span>
                       <div className="text-gray-500 mt-1 font-normal text-sm">
                         ${billingCycle === 'monthly' ? '125' : calculateAnnualPrice(125)} {billingCycle === 'yearly' ? '/year' : '/month'}
                       </div>
@@ -371,7 +386,7 @@ const PricingPage = () => {
                     <td className="px-6 py-4 border-b text-left font-medium">Number of Job Posts</td>
                     <td className="px-6 py-4 border-b text-center">1</td>
                     <td className="px-6 py-4 border-b text-center bg-[#D88A22]/5">1</td>
-                    <td className="px-6 py-4 border-b text-center">Unlimited</td>
+                    <td className="px-6 py-4 border-b text-center">Elite Hiring Pro</td>
                   </tr>
                   <tr>
                     <td className="px-6 py-4 border-b text-left font-medium">Video Applications</td>
@@ -469,7 +484,7 @@ const PricingPage = () => {
                         href={`/post-job?plan=unlimited&billing=${billingCycle}`}
                         variant="secondary"
                       >
-                        Start Unlimited
+                        Start Elite Hiring Pro
                       </Button>
                     </td>
                   </tr>

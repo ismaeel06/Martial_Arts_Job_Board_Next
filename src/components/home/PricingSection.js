@@ -66,7 +66,7 @@ const PricingSection = () => {
       recommended: true,
     },
     {
-      name: 'Unlimited',
+      name: 'Elite Hiring Pro',
       price: billingCycle === 'monthly' ? '125' : calculateAnnualPrice(125).toString(),
       description: 'For schools with continuous hiring needs',
       features: [
@@ -76,7 +76,7 @@ const PricingSection = () => {
         'Candidate video review',
         'Dedicated account manager'
       ],
-      cta: 'Start Unlimited',
+      cta: 'Start Elite Hiring Pro',
       ctaLink: '/post-job?plan=unlimited',
     }
   ];
@@ -89,7 +89,7 @@ const PricingSection = () => {
   };
 
   return (
-    <section ref={sectionRef} className="py-20 bg-gray-50">
+    <section ref={sectionRef} className="pt-20 pb-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Pricing Plans</h2>
@@ -97,7 +97,22 @@ const PricingSection = () => {
           <p className="max-w-2xl mx-auto text-gray-600">
             Choose the perfect plan for your martial arts school's hiring needs
           </p>
-          
+
+{/* Urgency Banner */}
+<div className="max-w-3xl mx-auto mt-8 mb-6 bg-orange-50 border border-orange-200 rounded-lg p-4 shadow-sm">
+  <div className="flex items-center mb-2">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-orange-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span className="text-base font-bold text-gray-900">
+      We are opening enrollment for only 17 Founding Member Schools.
+    </span>
+  </div>
+  <p className="text-sm text-gray-700 ml-9">
+    Lock in lifetime discounted pricing before our national launch. Your rate will never increase as long as you remain active.
+  </p>
+</div>
+
           {/* Billing Cycle Toggle */}
           <div className="flex justify-center mt-8 mb-4">
             <div className="bg-gray-100 p-1 rounded-lg inline-flex">
