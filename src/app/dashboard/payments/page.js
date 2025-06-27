@@ -1,0 +1,12 @@
+import PaymentTable from '../../../components/dashboard/PaymentTable';
+
+export default function ManagePayments() {
+  return (
+    <div className="max-w-full mx-auto px-2 sm:px-4 md:px-8 py-4 w-full">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-accent">Manage Payments</h2>
+      <div className="bg-white/80 rounded-2xl shadow-xl p-2 sm:p-4 md:p-6 overflow-x-auto">
+        <PaymentTable />
+      </div>
+    </div>
+  );
+}

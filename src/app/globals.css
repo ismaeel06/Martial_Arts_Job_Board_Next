@@ -34,6 +34,12 @@ body {
   100% { transform: scale(1); }
 }
 
+/* Dashboard sidebar/drawer animations */
+.animate-slide-in { animation: slideInSidebar 0.3s cubic-bezier(0.4,0,0.2,1); }
+@keyframes slideInSidebar { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+.animate-fade-in { animation: fadeInSidebar 0.4s cubic-bezier(0.4,0,0.2,1); }
+@keyframes fadeInSidebar { from { opacity: 0; } to { opacity: 1; } }
+
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out forwards;
 }
@@ -88,4 +94,17 @@ body {
 .btn-outline:hover {
   background-color: black;
   color: white;
+}
+
+/* Fix for search input border on focus (dashboard tables) */
+input[type="text"].dashboard-search:focus {
+  border-color: #D88A22 !important;
+  box-shadow: 0 0 0 2px #FFD6A0 !important;
+  outline: none !important;
+}
+input[type="text"].dashboard-search {
+  border-width: 2px !important;
+  border-color: #FFA53B !important;
+  border-radius: 0.75rem !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
