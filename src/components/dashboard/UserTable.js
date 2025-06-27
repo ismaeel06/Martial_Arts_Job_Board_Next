@@ -79,21 +79,19 @@ export default function UserTable() {
 		usersToShow = users.filter(u => u.id === currentUserId);
 	}
 
-	// Filter users by search (admin only for now)
-	const filteredUsers = role === 'admin'
-		? usersToShow.filter(user =>
-			Object.values(user).some(val =>
-				String(val).toLowerCase().includes(search.toLowerCase())
-			)
+	// Filter users by search (all roles)
+	const filteredUsers = usersToShow.filter(user =>
+		Object.values(user).some(val =>
+			String(val).toLowerCase().includes(search.toLowerCase())
 		)
-		: usersToShow;
+	);
 
 	const columns = columnsByRole[role] || columnsByRole.admin;
 
 	return (
 		<div className="w-full overflow-x-auto">
 			<div className="min-w-[600px]">
-				{role === 'admin' && (
+				{(
 					<div className="mb-4 flex items-center">
 						<input
 							type="text"
@@ -102,7 +100,7 @@ export default function UserTable() {
 							onChange={e => setSearch(e.target.value)}
 							className="dashboard-search px-4 py-2 border rounded-lg shadow focus:outline-none w-full max-w-xs"
 						/>
-						<Button variant="primary" size="sm" className="ml-4">+ Create User</Button>
+						{role === 'admin' && <Button variant="primary" size="sm" className="ml-4">+ Create User</Button>}
 					</div>
 				)}
 				<div className="overflow-x-auto rounded-2xl shadow-xl bg-white/95 animate-fade-in border border-orange-200">

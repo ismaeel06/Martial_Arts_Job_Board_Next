@@ -85,21 +85,19 @@ export default function PaymentTable() {
 		);
 	}
 
-	// Filter payments by search (admin only for now)
-	const filteredPayments = role === 'admin'
-		? paymentsToShow.filter(payment =>
-			Object.values(payment).some(val =>
-				(typeof val === 'object' ? Object.values(val).join(' ') : String(val)).toLowerCase().includes(search.toLowerCase())
-			)
+	// Filter payments by search (all roles)
+	const filteredPayments = paymentsToShow.filter(payment =>
+		Object.values(payment).some(val =>
+			(typeof val === 'object' ? Object.values(val).join(' ') : String(val)).toLowerCase().includes(search.toLowerCase())
 		)
-		: paymentsToShow;
+	);
 
 	const columns = columnsByRole[role] || columnsByRole.admin;
 
 	return (
 		<div className="w-full overflow-x-auto">
 			<div className="min-w-[600px]">
-				{role === 'admin' && (
+				{(
 					<div className="mb-4 flex items-center">
 						<input
 							type="text"
