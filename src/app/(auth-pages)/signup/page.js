@@ -165,7 +165,7 @@ export default function SignUp() {
 
 
 
-      router.push("/login");
+      router.push("/CTA");
     } catch (err) {
       setGeneralError(err.message || "Something went wrong.");
     } finally {
