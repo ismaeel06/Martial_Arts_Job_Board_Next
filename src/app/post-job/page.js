@@ -8,35 +8,48 @@ import Image from 'next/image';
 const PostJobPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState('featured'); // Default to featured plan
+
+  // Current tag input state
+  const [currentInput, setCurrentInput] = useState({
+    requirement: "",
+    responsibility: "",
+    benefit: ""
+  });
   
-  // Form state
+  // Add field errors state
+  const [fieldErrors, setFieldErrors] = useState({
+    // Step 2 errors
+    title: "",
+    martial_art: "",
+    job_type: "",
+    location: "",
+    description: "",
+    requirements: "",
+    responsibilities: "",
+    
+    // Step 3 errors
+    emailAddress: "",
+    redirectUrl: "",
+  });
+  
+  // Form state - removed schoolName, schoolLogo, schoolWebsite, schoolSize, schoolDescription
   const [formData, setFormData] = useState({
     // Step 1: Choose Plan
     plan: 'featured',
     
     // Step 2: Job Details
-    jobTitle: '',
-    jobType: '',
-    employmentType: '',
-    martialArtStyle: '',
-    experienceLevel: '',
-    salary: '',
-    salaryType: 'range',
+    title: '',
+    martial_art: '',
+    job_type: '',
+    salary_range: '',
     location: '',
     remote: false,
     description: '',
-    responsibilities: '',
-    requirements: '',
-    benefits: '',
+    responsibilities: [],
+    requirements: [],
+    benefits: [],
     
-    // Step 3: School Details
-    schoolName: '',
-    schoolLogo: null,
-    schoolWebsite: '',
-    schoolSize: '',
-    schoolDescription: '',
-    
-    // Step 4: Application Settings
+    // Step 3: Application Settings (formerly step 4)
     receiveApplicationsBy: 'email',
     emailAddress: '',
     phoneNumber: '',
@@ -58,6 +71,78 @@ const PostJobPage = () => {
     if (name === 'plan') {
       setSelectedPlan(value);
     }
+    
+    // Clear validation error when user types
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
+  };
+
+  // Handle tag input changes
+  const handleTagInputChange = (e, field) => {
+    setCurrentInput({
+      ...currentInput,
+      [field]: e.target.value
+    });
+  };
+  
+  // Add tag to a field
+  const addTag = (field) => {
+    const inputField = field === 'requirements' ? 'requirement' : 
+                       field === 'responsibilities' ? 'responsibility' : 'benefit';
+                       
+    const value = currentInput[inputField]?.trim();
+    if (!value) return; // Don't add empty tags
+    
+    if (!formData[field].includes(value)) {
+      const updatedTags = [...formData[field], value];
+      setFormData(prev => ({
+        ...prev,
+        [field]: updatedTags
+      }));
+      
+      // Clear the input
+      setCurrentInput(prev => ({
+        ...prev,
+        [inputField]: ""
+      }));
+      
+      // Clear validation error
+      if (fieldErrors[field]) {
+        setFieldErrors(prev => ({
+          ...prev,
+          [field]: ""
+        }));
+      }
+    }
+  };
+  
+  // Remove tag from a field
+  const removeTag = (field, tagToRemove) => {
+    const updatedTags = formData[field].filter(tag => tag !== tagToRemove);
+    setFormData(prev => ({
+      ...prev,
+      [field]: updatedTags
+    }));
+    
+    // Re-validate if empty after removal
+    if (updatedTags.length === 0 && (field === 'requirements' || field === 'responsibilities')) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [field]: `Please add at least one ${field.slice(0, -1)}`
+      }));
+    }
+  };
+  
+  // Handle keypress for tag inputs
+  const handleTagKeyPress = (e, field) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag(field);
+    }
   };
   
   // Handle file uploads
@@ -71,19 +156,159 @@ const PostJobPage = () => {
     }
   };
   
+  // Email validation function
+  const isEmailValid = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+  
+  // Validate step 2 fields
+  const validateStep2 = () => {
+    const errors = {
+      title: "",
+      martial_art: "",
+      job_type: "",
+      location: "",
+      description: "",
+      requirements: "",
+      responsibilities: "",
+    };
+    
+    let isValid = true;
+    
+    // Check required fields
+    if (!formData.title.trim()) {
+      errors.title = "Job title is required";
+      isValid = false;
+    }
+    
+    if (!formData.martial_art) {
+      errors.martial_art = "Please select a martial art";
+      isValid = false;
+    }
+    
+    if (!formData.job_type) {
+      errors.job_type = "Please select a job type";
+      isValid = false;
+    }
+    
+    if (!formData.location.trim()) {
+      errors.location = "Location is required";
+      isValid = false;
+    }
+    
+    if (!formData.description.trim()) {
+      errors.description = "Job description is required";
+      isValid = false;
+    }
+    
+    if (formData.requirements.length === 0) {
+      errors.requirements = "Please add at least one requirement";
+      isValid = false;
+    }
+    
+    if (formData.responsibilities.length === 0) {
+      errors.responsibilities = "Please add at least one responsibility";
+      isValid = false;
+    }
+    
+    // Update error state
+    setFieldErrors(prev => ({
+      ...prev,
+      ...errors
+    }));
+    
+    return isValid;
+  };
+  
+  // Validate step 3 fields
+  const validateStep3 = () => {
+    const errors = {
+      emailAddress: "",
+      redirectUrl: "",
+    };
+    
+    let isValid = true;
+    
+    // Validate email if that option is selected
+    if (formData.receiveApplicationsBy === 'email') {
+      if (!formData.emailAddress.trim()) {
+        errors.emailAddress = "Email address is required";
+        isValid = false;
+      } else if (!isEmailValid(formData.emailAddress)) {
+        errors.emailAddress = "Please enter a valid email address";
+        isValid = false;
+      }
+    }
+    
+    // Validate redirect URL if that option is selected
+    if (formData.receiveApplicationsBy === 'redirect') {
+      if (!formData.redirectUrl.trim()) {
+        errors.redirectUrl = "Application URL is required";
+        isValid = false;
+      } else if (!formData.redirectUrl.startsWith('http')) {
+        errors.redirectUrl = "Please enter a valid URL starting with http:// or https://";
+        isValid = false;
+      }
+    }
+    
+    // Update error state
+    setFieldErrors(prev => ({
+      ...prev,
+      ...errors
+    }));
+    
+    return isValid;
+  };
+  
   // Form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Here you would send the form data to your backend API
-    console.log('Job posting form submitted:', formData);
+    // Validate step 3 before submission
+    if (!validateStep3()) {
+      return;
+    }
+    
+    // Prepare data for API submission
+    const jobData = {
+      // Core job data
+      title: formData.title,
+      description: formData.description,
+      martial_art: formData.martial_art,
+      job_type: formData.job_type,
+      salary_range: formData.salary_range,
+      location: formData.location,
+      
+      // Arrays for requirements, responsibilities, benefits
+      requirements: formData.requirements,
+      responsibilities: formData.responsibilities,
+      benefits: formData.benefits,
+    }
+    
+    // Log the job data that would be sent to the API
+    console.log('Job posting data to be sent:', jobData);
+    
+    // Here you would make the actual API call
+    // const response = await fetch('/api/jobs', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(jobData)
+    // });
     
     // Move to confirmation step
-    setCurrentStep(5);
+    setCurrentStep(4); // Changed from 5 to 4 since we removed a step
   };
   
   // Navigation between steps
   const nextStep = () => {
+    // If we're on step 2, validate before proceeding
+    if (currentStep === 2) {
+      if (!validateStep2()) {
+        return; // Stop if validation fails
+      }
+    }
+    
     setCurrentStep(currentStep + 1);
     window.scrollTo(0, 0);
   };
@@ -92,7 +317,7 @@ const PostJobPage = () => {
     setCurrentStep(currentStep - 1);
     window.scrollTo(0, 0);
   };
-  
+
   // Price values for display
   const prices = {
     starter: 44,
@@ -100,10 +325,48 @@ const PostJobPage = () => {
     unlimited: 125
   };
   
+  // UI component for displaying tags
+  const TagDisplay = ({ tags, onRemove, field }) => {
+    return (
+      <div className="flex flex-wrap gap-2 mt-2">
+        {tags.map((tag, index) => (
+          <div 
+            key={`${field}-${index}`}
+            className="bg-[#F9E9D1] border border-[#D88A22] text-[#8B5A13] px-2 py-1 rounded-md text-sm flex items-center"
+          >
+            <span className="max-w-[200px] truncate">{tag}</span>
+            <button
+              type="button"
+              onClick={() => onRemove(field, tag)}
+              className="ml-1 text-[#8B5A13] hover:text-[#D88A22] transition"
+              aria-label={`Remove ${tag}`}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  };
+  
+  // Error message component
+  const ErrorMessage = ({ message }) => {
+    if (!message) return null;
+    
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-md px-3 py-1 mt-1">
+        {message}
+      </div>
+    );
+  };
+  
   // Render the current step
   const renderStep = () => {
     switch(currentStep) {
       case 1:
+        // Keep Plan selection step as is
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-6">Choose Your Plan</h2>
@@ -123,8 +386,6 @@ const PostJobPage = () => {
     </div> 
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-
- 
               {/* Starter Plan */}
               <div 
                 className={`
@@ -244,7 +505,7 @@ const PostJobPage = () => {
                 }}
               >
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold">Unlimited</h3>
+                  <h3 className="text-xl font-bold">Elite Hiring Pro</h3>
                   <div className="h-6 w-6 rounded-full border-2 flex items-center justify-center">
                     {selectedPlan === 'unlimited' && (
                       <div className="h-3 w-3 bg-[#D88A22] rounded-full"></div>
@@ -280,91 +541,53 @@ const PostJobPage = () => {
               </div>
             </div>
             
-            <div className="flex justify-end">
+            <div className="flex justify-between">
+              <Button 
+                onClick={() => window.location.href = '/'}
+                disabled={currentStep === 1}
+              >
+                Back to Home
+              </Button>
               <Button onClick={nextStep}>Continue</Button>
             </div>
           </div>
         );
       
       case 2:
+        // Updated Job Details step with validation
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-6">Job Details</h2>
             
             <div className="space-y-6">
               <div>
-                <label htmlFor="jobTitle" className="block mb-2 font-medium">
+                <label htmlFor="title" className="block mb-2 font-medium">
                   Job Title <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  id="jobTitle"
-                  name="jobTitle"
-                  value={formData.jobTitle}
+                  id="title"
+                  name="title"
+                  value={formData.title}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
+                  className={`w-full px-4 py-3 border ${fieldErrors.title ? 'border-red-300' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
                   placeholder="e.g. Head Karate Instructor"
                   required
                 />
+                <ErrorMessage message={fieldErrors.title} />
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="jobType" className="block mb-2 font-medium">
-                    Job Type <span className="text-red-500">*</span>
+                  <label htmlFor="martial_art" className="block mb-2 font-medium">
+                    Martial Art <span className="text-red-500">*</span>
                   </label>
                   <select
-                    id="jobType"
-                    name="jobType"
-                    value={formData.jobType}
+                    id="martial_art"
+                    name="martial_art"
+                    value={formData.martial_art}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                    required
-                  >
-                    <option value="">Select Job Type</option>
-                    <option value="instructor">Instructor</option>
-                    <option value="head-coach">Head Coach</option>
-                    <option value="assistant-coach">Assistant Coach</option>
-                    <option value="program-director">Program Director</option>
-                    <option value="youth-instructor">Youth Instructor</option>
-                    <option value="admin">Admin/Support Staff</option>
-                    <option value="management">Management</option>
-                  </select>
-                </div>
-                
-                <div>
-                  <label htmlFor="employmentType" className="block mb-2 font-medium">
-                    Employment Type <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="employmentType"
-                    name="employmentType"
-                    value={formData.employmentType}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                    required
-                  >
-                    <option value="">Select Employment Type</option>
-                    <option value="full-time">Full-time</option>
-                    <option value="part-time">Part-time</option>
-                    <option value="contract">Contract</option>
-                    <option value="temporary">Temporary</option>
-                    <option value="internship">Internship</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="martialArtStyle" className="block mb-2 font-medium">
-                    Martial Art Style <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="martialArtStyle"
-                    name="martialArtStyle"
-                    value={formData.martialArtStyle}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
+                    className={`w-full px-4 py-3 border ${fieldErrors.martial_art ? 'border-red-300' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
                     required
                   >
                     <option value="">Select Style</option>
@@ -379,40 +602,42 @@ const PostJobPage = () => {
                     <option value="Multiple">Multiple Styles</option>
                     <option value="Other">Other</option>
                   </select>
+                  <ErrorMessage message={fieldErrors.martial_art} />
                 </div>
                 
                 <div>
-                  <label htmlFor="experienceLevel" className="block mb-2 font-medium">
-                    Experience Level <span className="text-red-500">*</span>
+                  <label htmlFor="job_type" className="block mb-2 font-medium">
+                    Job Type <span className="text-red-500">*</span>
                   </label>
                   <select
-                    id="experienceLevel"
-                    name="experienceLevel"
-                    value={formData.experienceLevel}
+                    id="job_type"
+                    name="job_type"
+                    value={formData.job_type}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
+                    className={`w-full px-4 py-3 border ${fieldErrors.job_type ? 'border-red-300' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
                     required
                   >
-                    <option value="">Select Experience Level</option>
-                    <option value="Beginner">Beginner (0-1 years)</option>
-                    <option value="Intermediate">Intermediate (1-3 years)</option>
-                    <option value="Experienced">Experienced (3-5 years)</option>
-                    <option value="Advanced">Advanced (5+ years)</option>
-                    <option value="Master">Master Level</option>
+                    <option value="">Select Job Type</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Temporary">Temporary</option>
+                    <option value="Freelance">Freelance</option>
                   </select>
+                  <ErrorMessage message={fieldErrors.job_type} />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="salary" className="block mb-2 font-medium">
-                    Salary/Pay
+                  <label htmlFor="salary_range" className="block mb-2 font-medium">
+                    Salary Range
                   </label>
                   <input
                     type="text"
-                    id="salary"
-                    name="salary"
-                    value={formData.salary}
+                    id="salary_range"
+                    name="salary_range"
+                    value={formData.salary_range}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
                     placeholder="e.g. $40,000 - $60,000 or $25/hour"
@@ -420,58 +645,35 @@ const PostJobPage = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="salaryType" className="block mb-2 font-medium">
-                    Pay Type
-                  </label>
-                  <select
-                    id="salaryType"
-                    name="salaryType"
-                    value={formData.salaryType}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  >
-                    <option value="range">Salary Range</option>
-                    <option value="exact">Exact Salary</option>
-                    <option value="hourly">Hourly Rate</option>
-                    <option value="commission">Commission-Based</option>
-                    <option value="negotiable">Negotiable</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
                   <label htmlFor="location" className="block mb-2 font-medium">
                     Location <span className="text-red-500">*</span>
                   </label>
-                  <input
-                    type="text"
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                    placeholder="City, State or Remote"
-                    required
-                  />
-                </div>
-                
-                <div className="flex items-center">
-                  <div className="mt-8">
-                    <label className="inline-flex items-center cursor-pointer">
+                  <div className="flex">
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      className={`flex-grow px-4 py-3 border ${fieldErrors.location ? 'border-red-300' : 'border-gray-300'} rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
+                      placeholder="City, State or Remote"
+                      required
+                    />
+                    <div className="inline-flex items-center px-3 border border-l-0 border-gray-300 rounded-r-md bg-gray-50">
                       <input
                         type="checkbox"
                         name="remote"
+                        id="remote"
                         checked={formData.remote}
                         onChange={handleChange}
-                        className="sr-only peer"
+                        className="w-4 h-4 text-[#D88A22] accent-[#D88A22] rounded focus:ring-[#D88A22]"
                       />
-                      <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#D88A22] rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D88A22]"></div>
-                      <span className="ms-3 font-medium text-gray-700">
-                        This is a remote position
-                      </span>
-                    </label>
+                      <label htmlFor="remote" className="ml-2 text-sm text-gray-700">
+                        Remote
+                      </label>
+                    </div>
                   </div>
+                  <ErrorMessage message={fieldErrors.location} />
                 </div>
               </div>
               
@@ -485,166 +687,108 @@ const PostJobPage = () => {
                   value={formData.description}
                   onChange={handleChange}
                   rows="5"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
+                  className={`w-full px-4 py-3 border ${fieldErrors.description ? 'border-red-300' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
                   placeholder="Provide a detailed description of the job..."
                   required
                 ></textarea>
+                <ErrorMessage message={fieldErrors.description} />
               </div>
               
               <div>
-                <label htmlFor="responsibilities" className="block mb-2 font-medium">
-                  Responsibilities <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="responsibilities"
-                  name="responsibilities"
-                  value={formData.responsibilities}
-                  onChange={handleChange}
-                  rows="4"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  placeholder="List the key responsibilities of the role..."
-                  required
-                ></textarea>
-              </div>
-              
-              <div>
-                <label htmlFor="requirements" className="block mb-2 font-medium">
+                <label className="block mb-2 font-medium">
                   Requirements <span className="text-red-500">*</span>
                 </label>
-                <textarea
-                  id="requirements"
-                  name="requirements"
-                  value={formData.requirements}
-                  onChange={handleChange}
-                  rows="4"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  placeholder="List qualifications, skills, and experience required..."
-                  required
-                ></textarea>
-              </div>
-              
-              <div>
-                <label htmlFor="benefits" className="block mb-2 font-medium">
-                  Benefits
-                </label>
-                <textarea
-                  id="benefits"
-                  name="benefits"
-                  value={formData.benefits}
-                  onChange={handleChange}
-                  rows="3"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  placeholder="List any benefits offered with this position..."
-                ></textarea>
-              </div>
-            </div>
-            
-            <div className="flex justify-between mt-8">
-              <Button variant="secondary" onClick={prevStep}>
-                Back
-              </Button>
-              <Button onClick={nextStep}>
-                Continue
-              </Button>
-            </div>
-          </div>
-        );
-      
-      case 3:
-        return (
-          <div className="animate-fade-in">
-            <h2 className="text-2xl font-bold mb-6">School Details</h2>
-            
-            <div className="space-y-6">
-              <div>
-                <label htmlFor="schoolName" className="block mb-2 font-medium">
-                  School Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="schoolName"
-                  name="schoolName"
-                  value={formData.schoolName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  placeholder="e.g. Dragon Martial Arts Academy"
-                  required
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="schoolLogo" className="block mb-2 font-medium">
-                  School Logo
-                </label>
-                <input
-                  type="file"
-                  id="schoolLogo"
-                  name="schoolLogo"
-                  onChange={handleFileChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  accept="image/*"
-                />
-                <p className="text-sm text-gray-500 mt-1">
-                  Recommended size: 400x400 pixels, max 2MB. PNG or JPG formats.
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label htmlFor="schoolWebsite" className="block mb-2 font-medium">
-                    School Website
-                  </label>
+                <div className="flex">
                   <input
-                    type="url"
-                    id="schoolWebsite"
-                    name="schoolWebsite"
-                    value={formData.schoolWebsite}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                    placeholder="https://www.yourschool.com"
+                    type="text"
+                    value={currentInput.requirement}
+                    onChange={(e) => handleTagInputChange(e, 'requirement')}
+                    onKeyPress={(e) => handleTagKeyPress(e, 'requirements')}
+                    className={`flex-1 px-4 py-3 border ${fieldErrors.requirements ? 'border-red-300' : 'border-gray-300'} rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
+                    placeholder="e.g. Black Belt in Karate"
                   />
+                  <button
+                    type="button"
+                    onClick={() => addTag('requirements')}
+                    className="px-4 py-3 bg-[#D88A22] text-white font-medium rounded-r-md hover:bg-[#b86f1a] transition"
+                    disabled={!currentInput.requirement}
+                  >
+                    Add
+                  </button>
                 </div>
                 
-                <div>
-                  <label htmlFor="schoolSize" className="block mb-2 font-medium">
-                    School Size
-                  </label>
-                  <select
-                    id="schoolSize"
-                    name="schoolSize"
-                    value={formData.schoolSize}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  >
-                    <option value="">Select School Size</option>
-                    <option value="Small">Small (under 100 students)</option>
-                    <option value="Medium">Medium (100-300 students)</option>
-                    <option value="Large">Large (300-500 students)</option>
-                    <option value="VeryLarge">Very Large (500+ students)</option>
-                    <option value="MultiLocation">Multi-Location</option>
-                  </select>
-                </div>
+                <TagDisplay 
+                  tags={formData.requirements} 
+                  onRemove={removeTag} 
+                  field="requirements" 
+                />
+                <ErrorMessage message={fieldErrors.requirements} />
               </div>
               
               <div>
-                <label htmlFor="schoolDescription" className="block mb-2 font-medium">
-                  About Your School <span className="text-red-500">*</span>
+                <label className="block mb-2 font-medium">
+                  Responsibilities <span className="text-red-500">*</span>
                 </label>
-                <textarea
-                  id="schoolDescription"
-                  name="schoolDescription"
-                  value={formData.schoolDescription}
-                  onChange={handleChange}
-                  rows="5"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
-                  placeholder="Tell potential instructors about your school, culture, and what makes it special..."
-                  required
-                ></textarea>
+                <div className="flex">
+                  <input
+                    type="text"
+                    value={currentInput.responsibility}
+                    onChange={(e) => handleTagInputChange(e, 'responsibility')}
+                    onKeyPress={(e) => handleTagKeyPress(e, 'responsibilities')}
+                    className={`flex-1 px-4 py-3 border ${fieldErrors.responsibilities ? 'border-red-300' : 'border-gray-300'} rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
+                    placeholder="e.g. Teach group/private classes"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => addTag('responsibilities')}
+                    className="px-4 py-3 bg-[#D88A22] text-white font-medium rounded-r-md hover:bg-[#b86f1a] transition"
+                    disabled={!currentInput.responsibility}
+                  >
+                    Add
+                  </button>
+                </div>
+                
+                <TagDisplay 
+                  tags={formData.responsibilities} 
+                  onRemove={removeTag} 
+                  field="responsibilities" 
+                />
+                <ErrorMessage message={fieldErrors.responsibilities} />
+              </div>
+              
+              <div>
+                <label className="block mb-2 font-medium">
+                  Benefits
+                </label>
+                <div className="flex">
+                  <input
+                    type="text"
+                    value={currentInput.benefit}
+                    onChange={(e) => handleTagInputChange(e, 'benefit')}
+                    onKeyPress={(e) => handleTagKeyPress(e, 'benefits')}
+                    className="flex-1 px-4 py-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
+                    placeholder="e.g. Free training"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => addTag('benefits')}
+                    className="px-4 py-3 bg-[#D88A22] text-white font-medium rounded-r-md hover:bg-[#b86f1a] transition"
+                    disabled={!currentInput.benefit}
+                  >
+                    Add
+                  </button>
+                </div>
+                
+                <TagDisplay 
+                  tags={formData.benefits} 
+                  onRemove={removeTag} 
+                  field="benefits" 
+                />
               </div>
             </div>
             
             <div className="flex justify-between mt-8">
-              <Button variant="secondary" onClick={prevStep}>
+              <Button onClick={prevStep}>
                 Back
               </Button>
               <Button onClick={nextStep}>
@@ -654,7 +798,8 @@ const PostJobPage = () => {
           </div>
         );
       
-      case 4:
+      // Case 3 is now Application Settings with validation
+      case 3:
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-6">Application Settings</h2>
@@ -672,7 +817,7 @@ const PostJobPage = () => {
                       value="email"
                       checked={formData.receiveApplicationsBy === 'email'}
                       onChange={handleChange}
-                      className="mr-2"
+                      className="mr-2 accent-[#D88A22]"
                     />
                     Email - receive applications to your email address
                   </label>
@@ -683,7 +828,7 @@ const PostJobPage = () => {
                       value="dashboard"
                       checked={formData.receiveApplicationsBy === 'dashboard'}
                       onChange={handleChange}
-                      className="mr-2"
+                      className="mr-2 accent-[#D88A22]"
                     />
                     Dashboard - manage applications in your employer dashboard
                   </label>
@@ -694,7 +839,7 @@ const PostJobPage = () => {
                       value="redirect"
                       checked={formData.receiveApplicationsBy === 'redirect'}
                       onChange={handleChange}
-                      className="mr-2"
+                      className="mr-2 accent-[#D88A22]"
                     />
                     External URL - send applicants to your application form
                   </label>
@@ -712,10 +857,11 @@ const PostJobPage = () => {
                     name="emailAddress"
                     value={formData.emailAddress}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
+                    className={`w-full px-4 py-3 border ${fieldErrors.emailAddress ? 'border-red-300' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
                     placeholder="Where should we send applications?"
                     required={formData.receiveApplicationsBy === 'email'}
                   />
+                  <ErrorMessage message={fieldErrors.emailAddress} />
                 </div>
               )}
               
@@ -730,10 +876,11 @@ const PostJobPage = () => {
                     name="redirectUrl"
                     value={formData.redirectUrl}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]"
+                    className={`w-full px-4 py-3 border ${fieldErrors.redirectUrl ? 'border-red-300' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-2 focus:ring-[#D88A22]`}
                     placeholder="https://your-application-form.com"
                     required={formData.receiveApplicationsBy === 'redirect'}
                   />
+                  <ErrorMessage message={fieldErrors.redirectUrl} />
                 </div>
               )}
               
@@ -775,7 +922,7 @@ const PostJobPage = () => {
                       name="requireVideo"
                       checked={formData.requireVideo}
                       onChange={handleChange}
-                      className="mr-2"
+                      className="mr-2 accent-[#D88A22]"
                     />
                   </div>
                   <div>
@@ -807,7 +954,7 @@ const PostJobPage = () => {
             </div>
             
             <div className="flex justify-between mt-8">
-              <Button variant="secondary" onClick={prevStep}>
+              <Button onClick={prevStep}>
                 Back
               </Button>
               <Button onClick={handleSubmit}>
@@ -817,7 +964,8 @@ const PostJobPage = () => {
           </div>
         );
         
-      case 5:
+      // Success confirmation (previously case 5, now case 4)
+      case 4:
         return (
           <div className="text-center py-8 animate-fade-in">
             <div className="inline-flex items-center justify-center w-24 h-24 mb-8 bg-green-100 rounded-full">
@@ -847,7 +995,7 @@ const PostJobPage = () => {
     }
   };
   
-  // Step indicator component
+  // Step indicator component - Updated to only show 3 steps instead of 4
   const StepIndicator = ({ currentStep, totalSteps }) => {
     return (
       <div className="mb-8">
@@ -885,10 +1033,7 @@ const PostJobPage = () => {
             <p className={currentStep >= 2 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Job Details</p>
           </div>
           <div className="text-center text-sm">
-            <p className={currentStep >= 3 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>School Info</p>
-          </div>
-          <div className="text-center text-sm">
-            <p className={currentStep >= 4 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Application</p>
+            <p className={currentStep >= 3 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Application</p>
           </div>
         </div>
       </div>
@@ -915,8 +1060,8 @@ const PostJobPage = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            {currentStep < 5 && (
-              <StepIndicator currentStep={currentStep} totalSteps={4} />
+            {currentStep < 4 && (
+              <StepIndicator currentStep={currentStep} totalSteps={3} />
             )}
             
             <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
