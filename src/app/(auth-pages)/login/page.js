@@ -79,18 +79,26 @@ export default function LoginPage() {
       return;
     }
 
+      const formData = {
+        email: form.email.trim(),
+        password: form.password,
+      };
+
     setLoading(true);
     try {
-      // Replace with your actual API call
-      // const res = await fetch("/api/auth/login", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify(form),
-      // });
-      // const data = await res.json();
-      // if (!res.ok) throw new Error(data.message || "Login failed");
-      console.log("Login form submitted:", form);
-      // router.push("/dashboard"); // Or wherever you want to redirect after login
+
+      // Log formData to see what would be sent to the backend
+          console.log("Login form data to be sent:", formData);
+
+    // Replace with your actual API call
+    // const res = await fetch("/api/auth/login", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(formData),
+    // });
+    // const data = await res.json();
+    // if (!res.ok) throw new Error(data.message || "Login failed");
+
     } catch (err) {
       setGeneralError(err.message || "Something went wrong.");
     } finally {
