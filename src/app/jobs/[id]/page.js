@@ -580,34 +580,15 @@ export default function JobDetails() {
               </div>
             </div>
               <div className="mt-6 md:mt-0 flex-shrink-0">
-              <Button 
-                className="bg-gradient-to-r from-[#D88A22] to-[#e09c43] hover:from-[#c67c1e] hover:to-[#d08b31] shadow-md"
-                onClick={() => {
-                  // Handle application button click
-                  // In a real app, this would open a modal or navigate to an application form
-                  
-                  // Example API integration (uncomment when ready):
-                  /*
-                  // This could be in a form submit handler
-                  const handleSubmitApplication = async (formData) => {
-                    try {
-                      const result = await JobService.applyForJob(job.id, formData);
-                      // Show success message, etc.
-                    } catch (error) {
-                      // Handle error
-                      console.error('Error submitting application:', error);
-                    }
-                  };
-                  */
-                  
-                  alert('Application functionality will be implemented when connected to backend API.');
-                }}
-              >
-                Apply Now
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </Button>
+<Button 
+  className="bg-gradient-to-r from-[#D88A22] to-[#e09c43] hover:from-[#c67c1e] hover:to-[#d08b31] shadow-md"
+  href={`/apply-job/${job.id}`}  // Changed to link to the apply-job page with job ID
+>
+  Apply Now
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+  </svg>
+</Button>
             </div>
           </div>
         </div>
@@ -669,9 +650,9 @@ export default function JobDetails() {
               )}
               
               <div className="mt-8 flex justify-center">
-                <Button className="bg-gradient-to-r from-[#D88A22] to-[#e09c43] hover:from-[#c67c1e] hover:to-[#d08b31] text-lg px-8 py-4 shadow-md">
-                  Apply for this Position
-                </Button>
+<Button className="mt-8 bg-gradient-to-r from-[#D88A22] to-[#e09c43] hover:from-[#c67c1e] hover:to-[#d08b31] text-lg px-8 py-4 shadow-md" href={`/apply-job/${job.id}`}>
+  Apply for this Position
+</Button>
               </div>
             </div>
           </div>
@@ -864,14 +845,17 @@ export default function JobDetails() {
         </div>
         
         {/* Apply Button Sticky Footer on Mobile */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-30">
-          <Button className="w-full flex items-center justify-center bg-gradient-to-r from-[#D88A22] to-[#e09c43] hover:from-[#c67c1e] hover:to-[#d08b31] text-lg py-3">
-            Apply for this Job
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
-          </Button>
-        </div>
+<div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg z-30">
+  <Button 
+    href={`/apply-job/${job.id}`}
+    className="w-full flex items-center justify-center bg-gradient-to-r from-[#D88A22] to-[#e09c43] hover:from-[#c67c1e] hover:to-[#d08b31] text-lg py-3"
+  >
+    Apply for this Job
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+    </svg>
+  </Button>
+</div>
       </div>
     </MainLayout>
   );
