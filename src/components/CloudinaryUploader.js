@@ -19,44 +19,58 @@ export default function CloudinaryUploader({
   // Convert MB to bytes
   const maxSizeBytes = maxSize * 1024 * 1024;
   
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    
-    if (!selectedFile) {
-      return;
-    }
-    
-  // Validate file size
-  if (selectedFile.size > maxSizeBytes) {
-    // Instead of alert, call the parent's error handler
-    if (onError) {
-      onError(`File is too large. Please select a file smaller than ${maxSize}MB.`);
-    }
+// In your handleFileChange function, modify it to this:
+const handleFileChange = (e) => {
+  const selectedFile = e.target.files[0];
+  
+  if (!selectedFile) {
     return;
   }
-    // Reset any previous errors when a valid file is selected
+  
+  // Validate file size
+  if (selectedFile.size > maxSizeBytes) {
+    const errorMessage = `File is too large. Please select a file smaller than ${maxSize}MB.`;
+    
+    // Use the onError callback to inform the parent component
+    if (onError) {
+      onError(errorMessage);
+    }
+    
+    // Don't proceed with setting the file
+    return;
+  }
+  
+  // Validate file type
+  if (fileType === 'video' && !selectedFile.type.startsWith('video/')) {
+    const errorMessage = 'Please select a video file.';
+    
+    if (onError) {
+      onError(errorMessage);
+    }
+    
+    return;
+  }
+  
+  if (fileType === 'image' && !selectedFile.type.startsWith('image/')) {
+    const errorMessage = 'Please select an image file.';
+    
+    if (onError) {
+      onError(errorMessage);
+    }
+    
+    return;
+  }
+
+  // Clear previous errors when a valid file is selected
   if (onError) {
     onError("");
   }
-    
-    // Validate file type
-    if (fileType === 'video' && !selectedFile.type.startsWith('video/')) {
-      alert('Please select a video file.');
-      return;
-    }
-    
-    if (fileType === 'image' && !selectedFile.type.startsWith('image/')) {
-      alert('Please select an image file.');
-      return;
-    }
-
-    setFile(selectedFile);
-    
-    // Notify parent component
-    onFileSelect(selectedFile);
-    
-
-  };
+  
+  setFile(selectedFile);
+  
+  // Notify parent component
+  onFileSelect(selectedFile);
+};
 
   const handleRemove = () => {
     setFile(null);
@@ -179,7 +193,7 @@ export default function CloudinaryUploader({
       )}
       
       {errorMessage && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-md px-3 py-1 mt-1">
+        <div className="inline-block bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-md px-3 py-1 mt-1">
           {errorMessage}
         </div>
       )}

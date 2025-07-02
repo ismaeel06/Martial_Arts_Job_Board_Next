@@ -104,7 +104,6 @@ const BELT_RANKS = [
 export default function InstructorSignUpPage() {
   const router = useRouter();
   const [videoFile, setVideoFile] = useState(null);
-const [uploadStatus, setUploadStatus] = useState(null);
   const [form, setForm] = useState({
     location: "",
     belt_rank: "",
@@ -373,7 +372,6 @@ const handleSubmit = async (e) => {
     // If there's a video file to upload, handle the Cloudinary upload first
     if (videoFile) {
       try {
-        setUploadStatus("Uploading video... This may take a moment.");
         
         // Create a FormData object to send the file to Cloudinary
         const formData = new FormData();
@@ -396,7 +394,6 @@ const handleSubmit = async (e) => {
         
         const uploadData = await uploadResponse.json();
         videoUrl = uploadData.secure_url;
-        setUploadStatus("Video uploaded successfully!");
         
       } catch (error) {
         console.error('Video upload error:', error);
@@ -913,6 +910,7 @@ const handleSubmit = async (e) => {
         sublabel="(MP4, MOV, or WebM, max 20MB)"
         onFileSelect={handleFileSelect}
         onRemove={() => setVideoFile(null)}
+        onError={handleFileError} // This is important!
         maxSize={20} // 20MB limit
         errorMessage={fieldErrors.video_url}
       />
