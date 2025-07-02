@@ -2,6 +2,8 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CloudinaryUploader from "@/components/CloudinaryUploader";
+
 
 const LOGO_SRC = "/logo.png";
 const SITE_NAME = "Martial Arts Job Board";
@@ -101,6 +103,8 @@ const BELT_RANKS = [
 
 export default function InstructorSignUpPage() {
   const router = useRouter();
+  const [videoFile, setVideoFile] = useState(null);
+const [uploadStatus, setUploadStatus] = useState(null);
   const [form, setForm] = useState({
     location: "",
     belt_rank: "",
@@ -143,6 +147,7 @@ const [currentInput, setCurrentInput] = useState({
     status: "",
     employment_type: "",
     start_date: "",
+      video_url: "",
   });
   
   const [generalError, setGeneralError] = useState("");
@@ -203,6 +208,35 @@ const [currentInput, setCurrentInput] = useState({
       !fields.employment_type ||
       !fields.start_date
     );
+  };
+
+  const handleFileSelect = (file) => {
+  setVideoFile(file);
+};
+
+// Add this handler for file validation errors
+const handleFileError = (errorMessage) => {
+  setFieldErrors(prev => ({
+    ...prev,
+    video_url: errorMessage
+  }));
+};
+
+
+    // Add this handler for Cloudinary uploads
+  const handleUploadSuccess = (resourceInfo, field) => {
+    setForm(prev => ({
+      ...prev,
+      [field]: resourceInfo.url
+    }));
+
+        // Clear any errors for this field
+    if (fieldErrors[field]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [field]: ''
+      }));
+    }
   };
 
   // Handle regular input changes
@@ -334,6 +368,45 @@ const handleSubmit = async (e) => {
 
   setLoading(true);
   try {
+    let videoUrl = form.video_url;
+    
+    // If there's a video file to upload, handle the Cloudinary upload first
+    if (videoFile) {
+      try {
+        setUploadStatus("Uploading video... This may take a moment.");
+        
+        // Create a FormData object to send the file to Cloudinary
+        const formData = new FormData();
+        formData.append('file', videoFile);
+        formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+        formData.append('folder', 'martial_arts_videos');
+        
+        // Upload to Cloudinary
+        const uploadResponse = await fetch(
+          `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/video/upload`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+        
+        if (!uploadResponse.ok) {
+          throw new Error('Video upload failed');
+        }
+        
+        const uploadData = await uploadResponse.json();
+        videoUrl = uploadData.secure_url;
+        setUploadStatus("Video uploaded successfully!");
+        
+      } catch (error) {
+        console.error('Video upload error:', error);
+        setGeneralError("Video upload failed. Please try again.");
+        setLoading(false);
+        return; // Stop form submission if video upload fails
+      }
+    }
+
+
   //   Create payload with exactly the field names from your spec
     const formData = {
       location: form.location,
@@ -351,7 +424,7 @@ const handleSubmit = async (e) => {
       achievements: form.achievements,
       education: form.education,
       certifications: form.certifications,
-      video_url: form.video_url || ""
+      video_url: videoUrl || ""
     };
     
     // Log data being sent
@@ -824,7 +897,7 @@ const handleSubmit = async (e) => {
   />
 </div>
 
-{/* Section: Demo Video */}
+{/* OPTIMIZED Video Upload Section */}
 <div className="border-b border-gray-200 pb-6">
   <h2 className={`text-xl font-semibold mb-4 ${PRIMARY_COLOR}`}>Demonstration Video</h2>
   <p className="text-gray-500 text-sm mb-4">
@@ -832,142 +905,26 @@ const handleSubmit = async (e) => {
   </p>
   
   <div className="flex flex-col md:flex-row gap-6">
+    {/* Video Upload */}
+    <div className="flex-grow">
+      <CloudinaryUploader
+        fileType="video"
+        label="Demo Video"
+        sublabel="(MP4, MOV, or WebM, max 20MB)"
+        onFileSelect={handleFileSelect}
+        onRemove={() => setVideoFile(null)}
+        maxSize={20} // 20MB limit
+        errorMessage={fieldErrors.video_url}
+      />
+    </div>
 
-{/* Video Upload */}
-<div className="flex-grow">
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Demo Video
-    <span className="text-gray-400 text-xs ml-2">(MP4, MOV, or WebM, max 100MB)</span>
-  </label>
-  
-  <div 
-    className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-[#D88A22] transition cursor-pointer"
-    onDragOver={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.currentTarget.classList.add('border-[#D88A22]');
-    }}
-    onDragLeave={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.currentTarget.classList.remove('border-[#D88A22]');
-    }}
-    onDrop={(e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.currentTarget.classList.remove('border-[#D88A22]');
-      
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-        const file = e.dataTransfer.files[0];
-        const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
-        
-        if (validTypes.includes(file.type)) {
-          setForm({
-            ...form,
-            video_file: file,
-            video_url: file.name // Use name as placeholder URL
-          });
-        } else {
-          alert('Please upload an MP4, MOV, or WebM video file.');
-        }
-      }
-    }}
-    onClick={() => document.getElementById('video-upload').click()}
-  >
-    <div className="space-y-2 text-center">
-      {form.video_file ? (
-        <>
-          <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-[#D88A22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <div className="flex justify-center text-sm text-gray-600">
-            <p className="text-[#D88A22] font-medium truncate max-w-xs">
-              {form.video_file.name}
-            </p>
-          </div>
-          <p className="text-xs text-gray-500">
-            {(form.video_file.size / (1024 * 1024)).toFixed(2)} MB
-          </p>
-        </>
-      ) : (
-        <>
-          <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-          </svg>
-          <div className="flex text-sm text-gray-600 justify-center">
-            <span className="relative cursor-pointer rounded-md font-medium text-[#D88A22] hover:text-[#b86f1a]">
-              Upload a file
-            </span>
-            <p className="pl-1">or drag and drop</p>
-          </div>
-          <p className="text-xs text-gray-500">
-            MP4, MOV, or WebM up to 100MB
-          </p>
-        </>
-      )}
-    </div>
-  </div>
-  
-  {/* Hidden file input */}
-  <input 
-    id="video-upload" 
-    name="video-upload" 
-    type="file" 
-    className="hidden" 
-    accept="video/mp4,video/quicktime,video/webm"
-    onChange={(e) => {
-      if (e.target.files && e.target.files[0]) {
-        const file = e.target.files[0];
-        
-        // Check file size (max 100MB)
-        if (file.size > 100 * 1024 * 1024) {
-          alert('File size exceeds 100MB limit.');
-          return;
-        }
-        
-        setForm({
-          ...form,
-          video_file: file,
-          video_url: file.name // Store filename as placeholder URL
-        });
-      }
-    }}
-  />
-  
-  {form.video_file && (
-    <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-md px-3 py-1 mt-2">
-      <span className="text-xs text-gray-500 truncate">
-        Video ready for upload
-      </span>
-      <button 
-        type="button"
-        onClick={(e) => {
-          e.stopPropagation(); // Prevent triggering the parent div's onClick
-          setForm({
-            ...form,
-            video_file: null,
-            video_url: ""
-          });
-        }}
-        className="text-gray-400 hover:text-red-500"
-        aria-label="Remove video"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-  )}
-</div>
-    
     {/* Video Preview */}
     <div className="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
-      {form.video_file ? (
+      {videoFile ? (
         <video 
           className="w-full h-full object-cover" 
           controls
-          src={URL.createObjectURL(form.video_file)}
+          src={URL.createObjectURL(videoFile)}
         >
           Your browser does not support the video tag.
         </video>
