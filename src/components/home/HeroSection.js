@@ -49,7 +49,7 @@ const HeroSection = () => {
               {/* Logo with subtle hover effect */}
               <div className="relative z-10 transition-transform duration-500 hover:scale-105 cursor-pointer">
                 <Image
-                  src="/Logo.png"
+                  src="/logo-home.png"
                   alt="MartialArtsJobsBoard.com"
                   width={400}
                   height={400}

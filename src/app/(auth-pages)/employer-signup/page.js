@@ -2,6 +2,7 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import CloudinaryUploader from "@/components/CloudinaryUploader";
 
 const LOGO_SRC = "/logo.png";
 const SITE_NAME = "Martial Arts Job Board";
@@ -19,7 +20,8 @@ export default function EmployerSignUpPage() {
   });
 
   // For handling image
-  const [logoPreview, setLogoPreview] = useState(null);
+  const [logoFile, setLogoFile] = useState(null); // Added for Cloudinary uploader
+
   
   const [fieldErrors, setFieldErrors] = useState({
     dojo_name: "",
@@ -93,6 +95,21 @@ export default function EmployerSignUpPage() {
       setGeneralError("");
     }
   };
+
+    // Handle logo file selection from CloudinaryUploader
+  const handleFileSelect = (file) => {
+    setLogoFile(file);
+  };
+
+  // Handle file validation errors from CloudinaryUploader
+  const handleFileError = (errorMessage) => {
+    setFieldErrors(prev => ({
+      ...prev,
+      logo: errorMessage
+    }));
+  };
+
+  
   
   // Handle logo image upload
   const handleLogoUpload = (e) => {
@@ -160,18 +177,55 @@ export default function EmployerSignUpPage() {
     }
 
     setLoading(true);
-    try {
-      // Create simple JSON object instead of FormData
+try {
+      let logoUrl = "";
+      
+      // If there's a logo file to upload, handle the Cloudinary upload first
+      if (logoFile) {
+        try {
+          
+          // Create a FormData object to send the file to Cloudinary
+          const formData = new FormData();
+          formData.append('file', logoFile);
+          formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+          formData.append('folder', 'martial_arts_dojos');
+          
+          // Upload to Cloudinary
+          const uploadResponse = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+            {
+              method: 'POST',
+              body: formData,
+            }
+          );
+          
+          if (!uploadResponse.ok) {
+            throw new Error('Logo upload failed');
+          }
+          
+          const uploadData = await uploadResponse.json();
+          logoUrl = uploadData.secure_url;
+
+          
+        } catch (error) {
+          console.error('Logo upload error:', error);
+          setGeneralError("Logo upload failed. Please try again.");
+          setLoading(false);
+          return; // Stop form submission if logo upload fails
+        }
+      }
+      
+      // Create simple JSON object with the data
       const formData = {
         dojo_name: form.dojo_name,
         dojo_location: form.dojo_location,
         website: form.website ? (!/^https?:\/\//i.test(form.website) ? 'https://' + form.website : form.website) : "",
-        // Don't include logo in JSON, will be handled separately later
-        has_logo: !!form.logo // Just a flag to indicate if a logo was selected
+        logo_url: logoUrl || ""
       };
       
       // Log data being sent for debugging
       console.log("Employer profile data being submitted:", formData);
+      
       
       // API call would go here later
       // const res = await fetch("/api/employer-signup", {
@@ -185,7 +239,7 @@ export default function EmployerSignUpPage() {
       // const data = await res.json();
       // if (!res.ok) throw new Error(data.message || "Profile creation failed");
       
-    } catch (err) {
+    }catch (err) {
       setGeneralError(err.message || "Something went wrong.");
     } finally {
       setLoading(false);
@@ -290,7 +344,7 @@ export default function EmployerSignUpPage() {
           </div>
         </div>
         
-        {/* Section: Logo Upload */}
+        {/* Section: Logo Upload - UPDATED with CloudinaryUploader */}
         <div className="border-b border-gray-200 pb-6">
           <h2 className={`text-xl font-semibold mb-4 ${PRIMARY_COLOR}`}>Dojo Logo</h2>
           <p className="text-gray-500 text-sm mb-4">
@@ -298,153 +352,30 @@ export default function EmployerSignUpPage() {
           </p>
           
           <div className="flex flex-col md:flex-row gap-6">
-            {/* Logo Upload */}
+            {/* Logo Upload - Using CloudinaryUploader component */}
             <div className="flex-grow">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Logo Image
-                <span className="text-gray-400 text-xs ml-2">(Optional - JPEG, PNG, GIF, max 5MB)</span>
-              </label>
-              
-              <div 
-                className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-[#D88A22] transition cursor-pointer"
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  e.currentTarget.classList.add('border-[#D88A22]');
-                }}
-                onDragLeave={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  e.currentTarget.classList.remove('border-[#D88A22]');
-                }}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  e.currentTarget.classList.remove('border-[#D88A22]');
-                  
-                  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                    const file = e.dataTransfer.files[0];
-                    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-                    
-                    if (validTypes.includes(file.type)) {
-                      setForm(prev => ({ ...prev, logo: file }));
-                      
-                      // Create preview URL
-                      const reader = new FileReader();
-                      reader.onloadend = () => {
-                        setLogoPreview(reader.result);
-                      };
-                      reader.readAsDataURL(file);
-                    } else {
-                      alert('Please upload a valid image file (JPEG, PNG, GIF, or WEBP).');
-                    }
-                  }
-                }}
-                onClick={() => document.getElementById('logo-upload').click()}
-              >
-                <div className="space-y-2 text-center">
-                  {form.logo ? (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-[#D88A22]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      <div className="flex justify-center text-sm text-gray-600">
-                        <p className="text-[#D88A22] font-medium truncate max-w-xs">
-                          {form.logo.name}
-                        </p>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        {(form.logo.size / (1024 * 1024)).toFixed(2)} MB
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                      </svg>
-                      <div className="flex text-sm text-gray-600 justify-center">
-                        <span className="relative cursor-pointer rounded-md font-medium text-[#D88A22] hover:text-[#b86f1a]">
-                          Upload a file
-                        </span>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        PNG, JPG, GIF up to 5MB
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-              
-              {/* Hidden file input */}
-              <input 
-                id="logo-upload" 
-                name="logo-upload" 
-                type="file" 
-                className="hidden" 
-                accept="image/jpeg,image/png,image/gif,image/webp"
-                onChange={handleLogoUpload}
+              <CloudinaryUploader
+                fileType="image"
+                label="Logo Image"
+                sublabel="(JPEG, PNG, GIF, max 5MB)"
+                onFileSelect={handleFileSelect}
+                onRemove={() => setLogoFile(null)}
+                onError={handleFileError}
+                maxSize={5} // 5MB limit
+                errorMessage={fieldErrors.logo}
               />
-              
-              {form.logo && (
-                <div className="flex items-center mt-2">
-                  <span className="inline-flex items-center bg-gray-50 border border-gray-200 rounded-md px-3 py-1 text-xs text-gray-500">
-                    Logo ready for upload
-                    <button 
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeLogo();
-                      }}
-                      className="ml-2 text-gray-400 hover:text-red-500"
-                      aria-label="Remove logo"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </span>
-                </div>
-              )}
-              
-              {fieldErrors.logo && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-md px-3 py-1 mt-1">
-                  {fieldErrors.logo}
-                </div>
-              )}
             </div>
             
             {/* Logo Preview */}
-            <div className="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center overflow-hidden relative">
-              {logoPreview ? (
-                <>
-                  <button 
-                    type="button"
-                    onClick={removeLogo}
-                    className="absolute top-2 right-2 bg-white bg-opacity-70 rounded-full p-1 shadow-sm hover:bg-opacity-100 transition z-10"
-                    aria-label="Remove logo"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600 hover:text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                  <img 
-                    src={logoPreview} 
-                    alt="Logo Preview" 
-                    className="max-h-full max-w-full object-contain p-4"
-                  />
-                </>
-              ) : (
-                <div className="text-center p-6">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Logo preview will appear here
-                  </p>
-                </div>
-              )}
-            </div>
+            {logoFile && (
+              <div className="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
+                <img
+                  src={URL.createObjectURL(logoFile)}
+                  alt="Logo Preview"
+                  className="max-h-full max-w-full object-contain p-4"
+                />
+              </div>
+            )}
           </div>
           
           {/* Tips & Instructions */}
