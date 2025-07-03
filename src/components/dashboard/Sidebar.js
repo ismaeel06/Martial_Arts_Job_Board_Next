@@ -7,6 +7,8 @@ import { useState } from 'react';
 import { Provider, useSelector } from 'react-redux';
 import store from '../../store';
 import Image from 'next/image';
+import { FaChartBar } from 'react-icons/fa';
+
 
 
 export default function Sidebar() {
@@ -17,6 +19,12 @@ export default function Sidebar() {
 	const navItems = [
 		{ name: 'Overview', href: '/dashboard', icon: <FaTachometerAlt className="text-xl" /> },
 		{ name: role === 'school' ? 'Jobs Posted' : role === 'instructor' ? 'Job Listings' : 'Jobs', href: '/dashboard/jobs', icon: <FaClipboardList className="text-xl" /> },
+		...(role === 'admin' ? [
+			{ name: 'Applications', href: '/dashboard/admin-applications', icon: <FaRegFileAlt className="text-xl" /> },
+			{ name: 'Subscriptions', href: '/dashboard/admin-subscriptions', icon: <FaMoneyBillWave className="text-xl" /> },
+			{ name: 'Reports', href: '/dashboard/admin-reports', icon: <FaChartBar className="text-xl" /> }
+    
+		] : []),
 		{ name: role === 'instructor' ? 'My Applications' : 'Users', href: role === 'instructor' ? '/dashboard/my-applications' : '/dashboard/users', icon: <FaRegFileAlt className="text-xl" /> },
 		{ name: 'Payments', href: '/dashboard/payments', icon: <FaMoneyBillWave className="text-xl" /> },
 	];
