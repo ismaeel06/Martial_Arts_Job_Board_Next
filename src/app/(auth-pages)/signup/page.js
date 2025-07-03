@@ -104,6 +104,49 @@ export default function SignUp() {
     fileInputRef.current?.click();
   };
 
+    const handleFileSelect = (file) => {
+    if (file) {
+      setForm((prev) => ({ ...prev, photo: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => setPhotoPreview(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
+    const handleFileError = (errorMessage) => {
+    setFieldErrors(prev => ({
+      ...prev,
+      photo: errorMessage
+    }));
+  };
+
+    const uploadPhotoToCloudinary = async (photoFile) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', photoFile);
+      formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      formData.append('folder', 'martial_arts_profiles');
+      
+      const uploadResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+      
+      if (!uploadResponse.ok) {
+        throw new Error('Photo upload failed');
+      }
+      
+      const uploadData = await uploadResponse.json();
+      return uploadData.secure_url;
+    } catch (error) {
+      console.error('Photo upload error:', error);
+      throw new Error("Photo upload failed. Please try again.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -124,14 +167,20 @@ export default function SignUp() {
       errors.email ||
       errors.password ||
       errors.confirmPassword ||
-      errors.phone
+      errors.phone ||
+      errors.photo
     ) {
       return;
     }
 
     setLoading(true);
     try {
+        let photoUrl = "";
       // Create FormData object for file uploads
+
+            if (form.photo) {
+        photoUrl = await uploadPhotoToCloudinary(form.photo);
+      }
 
       const formData = {
         first_name: form.first_name,
@@ -139,11 +188,8 @@ export default function SignUp() {
         email: form.email,
         password: form.password,
         phone: form.phone,
+        photoUrl: photoUrl
       };
-
-      if (form.photo) {
-        formData.photo = form.photo;
-      }
 
           // Log the data being sent
     console.log("Form data being sent to backend:");

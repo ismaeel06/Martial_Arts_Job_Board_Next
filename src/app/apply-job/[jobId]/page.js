@@ -64,10 +64,10 @@ const ApplyJobPage = () => {
       }
     } else if (fieldName === 'video_file') {
       // 100MB limit for video
-      if (file.size > 100 * 1024 * 1024) {
+      if (file.size > 20 * 1024 * 1024) {
         setFieldErrors(prev => ({
           ...prev,
-          video_file: 'Video file size must be less than 100MB'
+          video_file: 'Video file size must be less than 20MB'
         }));
         return;
       }
@@ -123,6 +123,40 @@ const ApplyJobPage = () => {
     return isValid;
   };
 
+    // Upload file to Cloudinary
+  const uploadToCloudinary = async (file, fileType) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
+      
+      // Set folder based on file type
+      const folder = fileType === 'resume' ? 'martial_arts_resumes' : 'martial_arts_videos';
+      formData.append('folder', folder);
+      
+      // Select the right Cloudinary resource type based on file type
+      const resourceType = fileType === 'resume' ? 'raw' : 'video';
+      
+      const uploadResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+      
+      if (!uploadResponse.ok) {
+        throw new Error(`${fileType.charAt(0).toUpperCase() + fileType.slice(1)} upload failed`);
+      }
+      
+      const uploadData = await uploadResponse.json();
+      return uploadData.secure_url;
+    } catch (error) {
+      console.error(`${fileType} upload error:`, error);
+      throw new Error(`${fileType.charAt(0).toUpperCase() + fileType.slice(1)} upload failed. Please try again.`);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -138,12 +172,25 @@ const ApplyJobPage = () => {
     setGeneralError('');
     
     try {
+
+      let resumeUrl = '';
+      let videoUrl = '';
+      
+      // Upload files to Cloudinary (only after validation passes)
+      if (formData.resume_file) {
+        resumeUrl = await uploadToCloudinary(formData.resume_file, 'resume');
+      }
+      
+      if (formData.video_file) {
+        videoUrl = await uploadToCloudinary(formData.video_file, 'video');
+      }
+      
       // Create the submission object
       const applicationData = {
         job_id: jobId,
         cover_letter: formData.cover_letter,
-        resume: formData.resume_file ? formData.resume_file.name : '', // In real implementation, this would be a file URL
-        video: formData.video_file ? formData.video_file.name : '', // In real implementation, this would be a file URL
+        resume: resumeUrl, // In real implementation, this would be a file URL
+        video: videoUrl // In real implementation, this would be a file URL
       };
       
       // Log data being sent for now
@@ -258,7 +305,6 @@ const ApplyJobPage = () => {
                         e.preventDefault();
                         e.stopPropagation();
                         e.currentTarget.classList.remove('border-[#D88A22]');
-                        
                         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
                           const file = e.dataTransfer.files[0];
                           const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -357,7 +403,7 @@ const ApplyJobPage = () => {
                   <div>
                     <label className="block mb-2 font-medium">
                       Teaching Demo Video
-                      <span className="text-gray-400 text-xs ml-2">(MP4, MOV, or WebM, max 100MB)</span>
+                      <span className="text-gray-400 text-xs ml-2">(MP4, MOV, or WebM, max 20MB)</span>
                     </label>
                     
                     <div className="flex flex-col md:flex-row gap-6">
@@ -375,32 +421,32 @@ const ApplyJobPage = () => {
                             e.stopPropagation();
                             e.currentTarget.classList.remove('border-[#D88A22]');
                           }}
-                          onDrop={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            e.currentTarget.classList.remove('border-[#D88A22]');
-                            
-                            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-                              const file = e.dataTransfer.files[0];
-                              const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
-                              
-                              if (validTypes.includes(file.type)) {
-                                if (file.size <= 100 * 1024 * 1024) { // 100MB limit
-                                  handleFileChange({ target: { files: [file] } }, 'video_file');
-                                } else {
-                                  setFieldErrors(prev => ({
-                                    ...prev,
-                                    video_file: 'Video file size must be less than 100MB'
-                                  }));
-                                }
-                              } else {
-                                setFieldErrors(prev => ({
-                                  ...prev,
-                                  video_file: 'Please upload an MP4, MOV, or WebM video file'
-                                }));
-                              }
-                            }
-                          }}
+onDrop={(e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  e.currentTarget.classList.remove('border-[#D88A22]');
+  
+  if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+    const file = e.dataTransfer.files[0];
+    const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
+    
+    if (validTypes.includes(file.type)) {
+      if (file.size <= 20 * 1024 * 1024) { // 20MB limit (changed from 100MB)
+        handleFileChange({ target: { files: [file] } }, 'video_file');
+      } else {
+        setFieldErrors(prev => ({
+          ...prev,
+          video_file: 'Video file size must be less than 20MB'
+        }));
+      }
+    } else {
+      setFieldErrors(prev => ({
+        ...prev,
+        video_file: 'Please upload an MP4, MOV, or WebM video file'
+      }));
+    }
+  }
+}}
                           onClick={() => document.getElementById('video-upload').click()}
                         >
                           <div className="space-y-2 text-center">
@@ -431,7 +477,7 @@ const ApplyJobPage = () => {
                                   <p className="pl-1">or drag and drop</p>
                                 </div>
                                 <p className="text-xs text-gray-500">
-                                  MP4, MOV, or WebM up to 100MB
+                                  MP4, MOV, or WebM up to 20MB
                                 </p>
                               </>
                             )}
@@ -503,7 +549,6 @@ const ApplyJobPage = () => {
                       </p>
                     </div>
                   </div>
-                  
                   {/* Submit Button */}
                   <Button
                     type="submit"
