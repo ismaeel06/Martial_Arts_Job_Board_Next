@@ -18,16 +18,25 @@ export default function Sidebar() {
 
 	const navItems = [
 		{ name: 'Overview', href: '/dashboard', icon: <FaTachometerAlt className="text-xl" /> },
-		{ name: role === 'school' ? 'Jobs Posted' : role === 'instructor' ? 'Job Listings' : 'Jobs', href: '/dashboard/jobs', icon: <FaClipboardList className="text-xl" /> },
+
+		...(role !== 'instructor' ? [
+		{ name: role === 'school' ? 'Jobs Posted'  : 'Jobs', href: '/dashboard/jobs', icon: <FaClipboardList className="text-xl" /> }
+		] : []),
 		...(role === 'admin' ? [
-			{ name: 'Applications', href: '/dashboard/admin-applications', icon: <FaRegFileAlt className="text-xl" /> },
 			{ name: 'Subscriptions', href: '/dashboard/admin-subscriptions', icon: <FaMoneyBillWave className="text-xl" /> },
-			{ name: 'Reports', href: '/dashboard/admin-reports', icon: <FaChartBar className="text-xl" /> }
+			{ name: 'Users', href: '/dashboard/users', icon: <FaMoneyBillWave className="text-xl" /> },
+			//{ name: 'Reports', href: '/dashboard/admin-reports', icon: <FaChartBar className="text-xl" /> }
     
 		] : []),
-		{ name: role === 'instructor' ? 'My Applications' : 'Users', href: role === 'instructor' ? '/dashboard/my-applications' : '/dashboard/users', icon: <FaRegFileAlt className="text-xl" /> },
-		{ name: 'Payments', href: '/dashboard/payments', icon: <FaMoneyBillWave className="text-xl" /> },
-	];
+		
+		{ name: role === 'instructor' ? 'My Applications' : role==='school' ? 'Applications Received' : 'Applications', href: role === 'instructor' ? '/dashboard/my-applications' : role==='school'? '/dashboard/admin-applications' : '/dashboard/admin-applications', icon: <FaRegFileAlt className="text-xl" /> },
+		...(role === 'school' || role==='instructor' ? [
+        { name: 'Active Subscriptions', href: '/dashboard/school-subs', icon: <FaMoneyBillWave className="text-xl" /> }
+    ] : []),
+		...((role!=='school' && role!== 'instructor') ?[
+			{ name: 'Payments', href: '/dashboard/payments', icon: <FaMoneyBillWave className="text-xl" /> },
+	]: []),
+];
 
 	// Sidebar content as a separate component for reuse
 	const SidebarContent = (
