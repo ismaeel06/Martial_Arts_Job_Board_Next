@@ -11,21 +11,23 @@ export default function AdminApplicationsPage() {
 
   // Redirect non-admin users
   React.useEffect(() => {
-    if (role !== 'admin') {
+    if (role !== 'admin' && role !== 'school') {
       router.push('/dashboard');
     }
   }, [role, router]);
 
-  if (role !== 'admin') return null;
+  if (role !== 'admin' && role !== 'school') return null;
 
   return (
     <div className="max-w-full mx-auto px-2 sm:px-4 md:px-8 py-4 w-full">
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight mb-2">
-          Applications
+          {role === 'admin' ? 'Applications' : 'Applications Received'}
         </h1>
         <p className="text-gray-600">
-          Review and manage all applications submitted through the platform.
+          {role === 'admin' 
+            ? 'Review and manage all applications submitted through the platform.'
+            : 'Review and manage applications for your posted jobs.'}
         </p>
       </div>
 

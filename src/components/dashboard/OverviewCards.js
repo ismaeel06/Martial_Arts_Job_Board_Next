@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { FaUserTie, FaUsers, FaMoneyBillWave, FaClipboardList, FaRegFileAlt, FaFlag } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
@@ -17,6 +18,7 @@ const getStatsByRole = (role) => {
 					{ label: 'Pending', value: 10, color: 'bg-yellow-100 text-yellow-700' },
 					{ label: 'Closed', value: 2, color: 'bg-red-100 text-red-700' },
 				],
+				link: '/dashboard/jobs',
 			},
 			{
 				label: 'Users',
@@ -29,6 +31,7 @@ const getStatsByRole = (role) => {
 					{ label: 'Employers', value: 40, color: 'bg-black/10 text-black' },
 					{ label: 'Admins', value: 8, color: 'bg-gray-200 text-gray-700' },
 				],
+				link: '/dashboard/users',
 			},
 			{
 				label: 'Applications',
@@ -41,6 +44,7 @@ const getStatsByRole = (role) => {
 					{ label: 'Accepted', value: 120, color: 'bg-green-100 text-green-700' },
 					{ label: 'Rejected', value: 30, color: 'bg-red-100 text-red-700' },
 				],
+				link: '/dashboard/admin-applications',
 			},
 			{
 				label: 'Payments',
@@ -53,6 +57,7 @@ const getStatsByRole = (role) => {
 					{ label: 'Pending', value: 8, color: 'bg-yellow-100 text-yellow-700' },
 					{ label: 'Failed', value: 2, color: 'bg-red-100 text-red-700' },
 				],
+				link: '/dashboard/payments',
 			},
 			{
 				label: 'Subscriptions',
@@ -64,18 +69,19 @@ const getStatsByRole = (role) => {
 					{ label: 'Active', value: 20, color: 'bg-green-100 text-green-700' },
 					{ label: 'Expired', value: 5, color: 'bg-gray-200 text-gray-700' },
 				],
+				link: '/dashboard/admin-subscriptions',
 			},
-			{
-				label: 'Reports',
-				value: 3,
-				icon: <FaFlag className="text-black text-4xl drop-shadow-lg" />,
-				accent: 'bg-black/10',
-				shadow: 'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
-				details: [
-					{ label: 'Pending', value: 2, color: 'bg-yellow-100 text-yellow-700' },
-					{ label: 'Resolved', value: 1, color: 'bg-green-100 text-green-700' },
-				],
-			},
+			// {
+			// 	label: 'Reports',
+			// 	value: 3,
+			// 	icon: <FaFlag className="text-black text-4xl drop-shadow-lg" />,
+			// 	accent: 'bg-black/10',
+			// 	shadow: 'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
+			// 	details: [
+			// 		{ label: 'Pending', value: 2, color: 'bg-yellow-100 text-yellow-700' },
+			// 		{ label: 'Resolved', value: 1, color: 'bg-green-100 text-green-700' },
+			// 	],
+			// },
 		];
 	}
 	if (role === 'school') {
@@ -90,6 +96,7 @@ const getStatsByRole = (role) => {
 					{ label: 'Active', value: 5, color: 'bg-green-100 text-green-700' },
 					{ label: 'Closed', value: 3, color: 'bg-red-100 text-red-700' },
 				],
+				link: '/dashboard/jobs', // Add this line to link to jobs page
 			},
 			{
 				label: 'Applications Received',
@@ -102,17 +109,7 @@ const getStatsByRole = (role) => {
 					{ label: 'Accepted', value: 25, color: 'bg-green-100 text-green-700' },
 					{ label: 'Rejected', value: 5, color: 'bg-red-100 text-red-700' },
 				],
-			},
-			{
-				label: 'Payments',
-				value: '$1,200',
-				icon: <FaMoneyBillWave className="text-black text-4xl drop-shadow-lg" />,
-				accent: 'bg-black/10',
-				shadow: 'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
-				details: [
-					{ label: 'Completed', value: 12, color: 'bg-green-100 text-green-700' },
-					{ label: 'Pending', value: 2, color: 'bg-yellow-100 text-yellow-700' },
-				],
+				link: '/dashboard/admin-applications'
 			},
 			{
 				label: 'Active Subscriptions',
@@ -123,6 +120,7 @@ const getStatsByRole = (role) => {
 				details: [
 					{ label: 'Active', value: 2, color: 'bg-green-100 text-green-700' },
 				],
+				link: '/dashboard/school-subs', 
 			},
 		];
 	}
@@ -139,28 +137,41 @@ const getStatsByRole = (role) => {
 					{ label: 'Accepted', value: 7, color: 'bg-green-100 text-green-700' },
 					{ label: 'Rejected', value: 2, color: 'bg-red-100 text-red-700' },
 				],
+				                link: '/dashboard/my-applications',
 			},
-			{
-				label: 'Jobs Available',
-				value: 25,
-				icon: <FaClipboardList className="text-orange-500 text-4xl drop-shadow-lg" />,
-				accent: 'bg-orange-100',
-				shadow: 'shadow-[0_8px_32px_0_rgba(216,138,34,0.10)]',
-				details: [
-					{ label: 'Full-Time', value: 10, color: 'bg-green-100 text-green-700' },
-					{ label: 'Part-Time', value: 15, color: 'bg-yellow-100 text-yellow-700' },
-				],
-			},
-			{
-				label: 'Payments',
-				value: '$800',
-				icon: <FaMoneyBillWave className="text-black text-4xl drop-shadow-lg" />,
-				accent: 'bg-black/10',
-				shadow: 'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
-				details: [
-					{ label: 'Received', value: 8, color: 'bg-green-100 text-green-700' },
-				],
-			},
+			            // Add Active Subscriptions card
+            {
+                label: 'Active Subscriptions',
+                value: 1,
+                icon: <FaUserTie className="text-orange-500 text-4xl drop-shadow-lg" />,
+                accent: 'bg-orange-100',
+                shadow: 'shadow-[0_8px_32px_0_rgba(216,138,34,0.10)]',
+                details: [
+                    { label: 'Active', value: 1, color: 'bg-green-100 text-green-700' },
+                ],
+                link: '/dashboard/school-subs',
+            },
+			// {
+			// 	label: 'Jobs Available',
+			// 	value: 25,
+			// 	icon: <FaClipboardList className="text-orange-500 text-4xl drop-shadow-lg" />,
+			// 	accent: 'bg-orange-100',
+			// 	shadow: 'shadow-[0_8px_32px_0_rgba(216,138,34,0.10)]',
+			// 	details: [
+			// 		{ label: 'Full-Time', value: 10, color: 'bg-green-100 text-green-700' },
+			// 		{ label: 'Part-Time', value: 15, color: 'bg-yellow-100 text-yellow-700' },
+			// 	],
+			// },
+			// {
+			// 	label: 'Payments',
+			// 	value: '$800',
+			// 	icon: <FaMoneyBillWave className="text-black text-4xl drop-shadow-lg" />,
+			// 	accent: 'bg-black/10',
+			// 	shadow: 'shadow-[0_8px_32px_0_rgba(0,0,0,0.08)]',
+			// 	details: [
+			// 		{ label: 'Received', value: 8, color: 'bg-green-100 text-green-700' },
+			// 	],
+			// },
 		];
 	}
 	return [];
@@ -168,7 +179,14 @@ const getStatsByRole = (role) => {
 
 export default function OverviewCards() {
 	const role = useSelector(state => state.role.value);
+	const router = useRouter();
 	const stats = getStatsByRole(role);
+	  
+  const handleCardClick = (link) => {
+    if (link) {
+      router.push(link);
+    }
+  };
 	return (
 		<div className="relative py-4">
 			<div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
@@ -177,6 +195,9 @@ export default function OverviewCards() {
 						key={stat.label}
 						className={`relative overflow-hidden rounded-2xl border border-orange-200 backdrop-blur-xl bg-white/90 ${stat.shadow} p-8 flex flex-col items-center justify-center min-h-[200px] group animate-fade-in transition-transform duration-300 hover:scale-[1.03] hover:shadow-2xl`}
 						style={{ animationDelay: `${i * 80}ms` }}
+						onClick={() => handleCardClick(stat.link)}
+            			role={stat.link ? "button" : undefined}
+            			aria-label={stat.link ? `Go to ${stat.label}` : undefined}
 					>
 						{/* Martial arts belt accent */}
 						<div className={`absolute left-0 bottom-0 w-full h-4 ${stat.accent} opacity-80 z-10 rounded-b-2xl`} />
