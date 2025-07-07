@@ -479,7 +479,7 @@ const handleSubmit = async (e) => {
     <div className="min-h-screen bg-gradient-to-br from-[#fff7ed] to-[#f3e8d1] px-2 py-8 flex flex-col items-center">
       {/* Logo and Site Name - keep as is */}
       <div className="flex flex-col sm:flex-row items-center mb-6 mt-4 gap-3">
-        <img
+        <image
           src={LOGO_SRC}
           alt="Martial Arts Job Board Logo"
           className="h-14 w-14 sm:h-16 sm:w-16"

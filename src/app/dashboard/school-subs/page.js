@@ -96,7 +96,7 @@ export default function SchoolSubscriptionsPage() {
       <div className="bg-white/95 rounded-2xl shadow-xl p-6 border border-orange-200 animate-fade-in">
         <div className="mb-6">
           <h2 className="text-xl font-bold mb-2 text-black">Upgrade Your Plan</h2>
-          <p className="text-gray-600">Select a plan that fits your school's hiring needs</p>
+          <p className="text-gray-600">Select a plan that fits your school&apos;s hiring needs</p>
         </div>
 
         {/* Billing Toggle */}

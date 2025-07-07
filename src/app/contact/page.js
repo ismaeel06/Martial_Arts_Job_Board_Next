@@ -54,7 +54,7 @@ const ContactPage = () => {
               Contact Us
             </h1>
             <p className="text-xl text-gray-300 mb-8 animate-fade-in" style={{ animationDelay: '200ms' }}>
-              Have questions or need support? We're here to help.
+              Have questions or need support? We&apos;re here to help.
             </p>
           </div>
         </div>
@@ -68,7 +68,7 @@ const ContactPage = () => {
             <div className="md:w-7/12">
               <h2 className="text-3xl font-bold mb-6">Get In Touch</h2>
               <p className="text-gray-600 mb-8">
-                Fill out the form below and we'll get back to you as soon as possible.
+                Fill out the form below and we&apos;ll get back to you as soon as possible.
               </p>
               
               {formSubmitted && (
@@ -77,7 +77,7 @@ const ContactPage = () => {
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    Your message has been sent! We'll be in touch shortly.
+                    Your message has been sent! We&apos;ll be in touch shortly.
                   </p>
                 </div>
               )}
@@ -271,10 +271,10 @@ const ContactPage = () => {
               </div>
               
               <div>
-                <h3 className="text-xl font-bold mb-3">I'm having technical issues with your platform. Who can help?</h3>
+                <h3 className="text-xl font-bold mb-3">I&apos;m having technical issues with your platform. Who can help?</h3>
                 <p className="text-gray-600">
                   Please contact our technical support team at support@martialartsjobaboard.com with details about the 
-                  issue you're experiencing, and we'll help resolve it promptly.
+                  issue you&apos;re experiencing, and we&apos;ll help resolve it promptly.
                 </p>
               </div>
               

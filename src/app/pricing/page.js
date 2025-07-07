@@ -126,7 +126,7 @@ const PricingPage = () => {
             <span className="text-[#D88A22]">Martial Arts Schools</span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto mb-8 animate-fade-in" style={{ animationDelay: '200ms' }}>
-            Choose the plan that best fits your school's hiring needs
+            Choose the plan that best fits your school&apos;s hiring needs
           </p>
         </div>
       </section>
@@ -217,7 +217,7 @@ We are opening enrollment for only 17 Founding Member Schools.
                     <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                   </svg>
                   <p className="text-xl md:text-2xl font-medium mb-6 leading-relaxed italic">
-                    "We found an incredible BJJ coach within 2 weeks of posting on MartialArtsJobsBoard. The Featured plan was definitely worth it for the extra visibility."
+                    &apos;We found an incredible BJJ coach within 2 weeks of posting on MartialArtsJobsBoard. The Featured plan was definitely worth it for the extra visibility.&apos;
                   </p>
                   <div>
                     <p className="font-bold">Sarah Chen</p>
@@ -290,7 +290,7 @@ We are opening enrollment for only 17 Founding Member Schools.
             <h2 className="text-3xl font-bold mb-4">Compare Plans</h2>
             <div className="h-1 w-16 bg-[#D88A22] mx-auto mb-6"></div>
             <p className="text-gray-600">
-              Choose the plan that offers exactly what you need for your martial arts school's hiring goals
+              Choose the plan that offers exactly what you need for your martial arts school&apos;s hiring goals
             </p>
           </div>
 
@@ -527,7 +527,7 @@ We are opening enrollment for only 17 Founding Member Schools.
           </div>
 
           <div className="text-center mt-10">
-            <p className="text-gray-600 mb-4">Can't find the answer you're looking for?</p>
+            <p className="text-gray-600 mb-4">Can&apos;t find the answer you&apos;re looking for?</p>
             <Button 
               href="/contact" 
               variant="outline" 

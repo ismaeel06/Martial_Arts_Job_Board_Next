@@ -415,7 +415,7 @@ const MOCK_INSTRUCTORS = [
       phone: "protected",
       social: {
         instagram: "david_kim_judo_bjj",
-        facebook: "DavidKimGrappling",
+        facebook: "DavidKimagerappling",
         youtube: "CompleteGrapplingSystem"
       }
     }
@@ -652,7 +652,7 @@ export default function InstructorProfile() {
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <h2 className="text-2xl font-bold mb-4">Instructor Not Found</h2>
-            <p className="text-gray-600 mb-6">The instructor profile you're looking for doesn't exist or has been removed.</p>
+            <p className="text-gray-600 mb-6">The instructor profile you&apos;re looking for doesn&apos;t exist or has been removed.</p>
             <Link href="/instructors">
               <Button>Browse All Instructors</Button>
             </Link>

@@ -807,7 +807,7 @@ const router = useRouter();
             </span>
             <h2 className="text-3xl font-bold text-gray-800 mb-3">Get Job Alerts</h2>
             <p className="text-gray-600 mb-8">
-              Sign up to receive personalized job notifications based on your preferences. We'll email you when new opportunities match your criteria.
+              Sign up to receive personalized job notifications based on your preferences. We(&apos)ll email you when new opportunities match your criteria.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <div className="flex-grow max-w-sm">

@@ -132,7 +132,7 @@ export default function JobTable({ statusFilter, forInstructor }) {
 											if (col.key === 'employer') {
 												return (
 													<td key={col.key} className="px-6 py-4 flex items-center gap-3">
-														<img
+														<image
 															src={job.employerLogo}
 															alt="logo"
 															className="w-8 h-8 rounded-full border-2 border-orange-200 shadow"

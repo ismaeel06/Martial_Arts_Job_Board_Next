@@ -90,7 +90,7 @@ const PricingCard = ({
         
           {/* Features */}
           <div className="mb-8 grow">
-            <div className="mb-3 text-sm font-medium text-gray-500 uppercase tracking-wide">What's included:</div>
+            <div className="mb-3 text-sm font-medium text-gray-500 uppercase tracking-wide">What&apos;s included:</div>
             <ul className="space-y-3">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-start">
