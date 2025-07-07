@@ -5,6 +5,7 @@ import MainLayout from '@/components/layout/MainLayout';
 import JobCard from '@/components/jobs/JobCard';
 import Button from '@/components/ui/Button';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 // API base URL - would be set from environment variables in real app
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.martialartsjoboard.com';
@@ -13,6 +14,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.martialarts
  * Job listing service functions for API integration
  */
 const JobService = {
+
+  
   // Get job listings with filters and pagination
   getJobs: async (params) => {
     try {
@@ -229,6 +232,9 @@ const FindJobsPage = () => {
       description: 'Oversee our fast-growing children\'s martial arts program. Experience teaching multiple styles preferred.'
     }
   ];
+
+  // Then add this to your component
+const router = useRouter();
   
   // Filter jobs based on search criteria
   const filteredJobs = jobListings.filter(job => {
@@ -330,15 +336,26 @@ const FindJobsPage = () => {
                 </svg>
                 Search Jobs Now
               </Button>
-              <Button 
-                variant="outline" 
-                size="lg"
-                href="/create-profile"
-                className="animate-fade-in"
-                style={{ animationDelay: '600ms' }}
-              >
-                Create Instructor Profile
-              </Button>
+<Button 
+  variant="outline" 
+  size="lg"
+  onClick={() => {
+    const userLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+    const userType = localStorage.getItem('userType');
+    
+    if (!userLoggedIn) {
+      // Not logged in, redirect to login
+      router.push('/login');
+    } else if (userType !== 'instructor') {
+      // Logged in but not an instructor, redirect to instructor signup
+      router.push('/instructor-signup');
+    } 
+  }}
+  className="animate-fade-in"
+  style={{ animationDelay: '600ms' }}
+>
+  Create Instructor Profile
+</Button>
             </div>
           </div>
         </div>
