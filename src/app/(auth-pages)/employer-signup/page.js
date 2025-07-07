@@ -238,6 +238,11 @@ try {
       
       // const data = await res.json();
       // if (!res.ok) throw new Error(data.message || "Profile creation failed");
+
+            localStorage.setItem('userLoggedIn', 'true');
+    localStorage.setItem('userType', 'employer');
+
+    router.push('/employer-CTA')
       
     }catch (err) {
       setGeneralError(err.message || "Something went wrong.");

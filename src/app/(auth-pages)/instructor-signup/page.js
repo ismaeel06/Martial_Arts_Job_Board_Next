@@ -436,6 +436,11 @@ const handleSubmit = async (e) => {
     
     // const data = await res.json();
     // if (!res.ok) throw new Error(data.message || "Profile creation failed");
+
+        localStorage.setItem('userLoggedIn', 'true');
+    localStorage.setItem('userType', 'instructor');
+
+        router.push('/instructor-CTA');
     
   } catch (err) {
     setGeneralError(err.message || "Something went wrong.");

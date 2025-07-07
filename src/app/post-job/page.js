@@ -19,19 +19,19 @@ const PostJobPage = () => {
     
     if (!userLoggedIn) {
       // Not logged in, redirect to login
-      router.push('/login');
+      router.replace('/login');
       return;
     }
     
     if (userType !== 'employer') {
       // Logged in but not an employer, redirect to employer signup
-      router.push('/employer-signup');
+      router.replace('/employer-signup');
       return;
     }
     
     if (!selectedPlan) {
       // Employer but no plan, redirect to pricing
-      router.push('/pricing');
+      router.replace('/pricing');
       return;
     }
     

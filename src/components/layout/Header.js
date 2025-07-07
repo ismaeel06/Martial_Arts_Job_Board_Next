@@ -9,38 +9,14 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isEmployer, setIsEmployer] = useState(false); 
-  const [hasPlan, setHasPlan] = useState(false);
+
   const pathname = usePathname();
 
   // Add this new useEffect to check login status
   useEffect(() => {
     // Simple implementation for now
     const userLoggedIn = localStorage.getItem('userLoggedIn');
-    const userType = localStorage.getItem('userType'); // 'employer' or 'instructor'
-    const selectedPlan = localStorage.getItem('selectedPlan'); // 'starter', 'featured', or 'unlimited'
-    
     setIsLoggedIn(userLoggedIn === 'true');
-    setIsEmployer(userType === 'employer');
-    setHasPlan(!!selectedPlan); // Convert to boolean
-    
-    // JWT and Redux implementation (commented out for now)
-    /*
-    // This will be replaced with Redux state management
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Verify token validity here
-      // Get user data from Redux store
-      const userData = store.getState().auth.user;
-      setIsLoggedIn(true);
-      setIsEmployer(userData.type === 'employer');
-      setHasPlan(!!userData.subscription.plan);
-    } else {
-      setIsLoggedIn(false);
-      setIsEmployer(false);
-      setHasPlan(false);
-    }
-    */
   }, []);
 
   useEffect(() => {
@@ -93,9 +69,6 @@ const Header = () => {
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
-
-    // Determine if Post Job button should be shown
-  const canPostJob = isLoggedIn && isEmployer && hasPlan;
 
   return (
     <header
@@ -152,31 +125,17 @@ const Header = () => {
             </Link>
           )}
 
-{canPostJob ? (
-  <Link
-    href="/post-job"
-    className="ml-2 px-5 py-2.5 bg-[#D88A22] text-white font-medium rounded-full transition-all duration-300 hover:bg-[#c07a1b] hover:shadow-lg hover:shadow-[#D88A22]/20 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#D88A22]/50 focus:ring-offset-2"
-  >
-    <span className="flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-      </svg>
-      Post a Job
-    </span>
-  </Link>
-) : (
-  <Link
-    href={isLoggedIn ? (isEmployer ? "/pricing" : "/employer-signup") : "/login"}
-    className="ml-2 px-5 py-2.5 bg-[#D88A22] text-white font-medium rounded-full transition-all duration-300 hover:bg-[#c07a1b] hover:shadow-lg hover:shadow-[#D88A22]/20 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#D88A22]/50 focus:ring-offset-2"
-  >
-    <span className="flex items-center">
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-      </svg>
-      Post a Job
-    </span>
-  </Link>
-)}
+<Link
+  href="/post-job"
+  className="ml-2 px-5 py-2.5 bg-[#D88A22] text-white font-medium rounded-full transition-all duration-300 hover:bg-[#c07a1b] hover:shadow-lg hover:shadow-[#D88A22]/20 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#D88A22]/50 focus:ring-offset-2"
+>
+  <span className="flex items-center">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+    </svg>
+    Post a Job
+  </span>
+</Link>
 
                     {/* Add Sign In/Log Out button here */}
           {isLoggedIn ? (
@@ -313,29 +272,16 @@ const Header = () => {
             
             <div className="p-6 border-t bg-gray-50">
             {/* Update mobile Post Job button with the same logic */}
-{canPostJob ? (
-  <Link
-    href="/post-job"
-    className="flex items-center justify-center w-full px-6 py-3.5 bg-[#D88A22] text-white font-medium rounded-lg transition-all duration-300 hover:bg-[#c07a1b] active:scale-95 shadow-md"
-    onClick={() => setMobileMenuOpen(false)}
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-    </svg>
-    Post a Job
-  </Link>
-) : (
-  <Link
-    href={isLoggedIn ? (isEmployer ? "/pricing" : "/employer-signup") : "/login"}
-    className="flex items-center justify-center w-full px-6 py-3.5 bg-[#D88A22] text-white font-medium rounded-lg transition-all duration-300 hover:bg-[#c07a1b] active:scale-95 shadow-md"
-    onClick={() => setMobileMenuOpen(false)}
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-    </svg>
-    Post a Job
-  </Link>
-)}
+<Link
+  href="/post-job"
+  className="flex items-center justify-center w-full px-6 py-3.5 bg-[#D88A22] text-white font-medium rounded-lg transition-all duration-300 hover:bg-[#c07a1b] active:scale-95 shadow-md"
+  onClick={() => setMobileMenuOpen(false)}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+  </svg>
+  Post a Job
+</Link>
               
               <div className="mt-6 flex justify-between items-center">
                 <div className="flex space-x-4">
