@@ -3,9 +3,29 @@
 import Image from 'next/image';
 import Button from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const HeroSection = () => {
   const [loaded, setLoaded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isEmployer, setIsEmployer] = useState(false);
+  const [hasPlan, setHasPlan] = useState(false);
+
+    useEffect(() => {
+    setLoaded(true);
+    
+    // Check user status for Post Job button
+    const userLoggedIn = localStorage.getItem('userLoggedIn');
+    const userType = localStorage.getItem('userType');
+    const selectedPlan = localStorage.getItem('selectedPlan');
+    
+    setIsLoggedIn(userLoggedIn === 'true');
+    setIsEmployer(userType === 'employer');
+    setHasPlan(!!selectedPlan);
+  }, []);
+
+    // Determine if user can post jobs
+  const canPostJob = isLoggedIn && isEmployer && hasPlan;
 
   useEffect(() => {
     setLoaded(true);
@@ -81,8 +101,8 @@ const HeroSection = () => {
             
             {/* Button group */}
             <div className="flex flex-col sm:flex-row gap-5">
-              <Button 
-                href="/post-job" 
+              <Link 
+                href={canPostJob ? "/post-job" : (isLoggedIn ? (isEmployer ? "/pricing" : "/employer-signup") : "/login")}
                 className="group relative overflow-hidden px-5 py-2.5 bg-[#D88A22] text-white font-medium rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-[#D88A22]/20 active:scale-95 hover:bg-[#c07a1b]"
               >
                 <span className="relative z-10 flex items-center justify-center">
@@ -92,7 +112,7 @@ const HeroSection = () => {
                   Post a Job
                 </span>
                 <span className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
-              </Button>
+              </Link>
               
               <Button 
                 href="/find-jobs" 
