@@ -101,18 +101,18 @@ const HeroSection = () => {
             
             {/* Button group */}
             <div className="flex flex-col sm:flex-row gap-5">
-              <Link 
-                href={canPostJob ? "/post-job" : (isLoggedIn ? (isEmployer ? "/pricing" : "/employer-signup") : "/login")}
-                className="group relative overflow-hidden px-5 py-2.5 bg-[#D88A22] text-white font-medium rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-[#D88A22]/20 active:scale-95 hover:bg-[#c07a1b]"
-              >
-                <span className="relative z-10 flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-                  Post a Job
-                </span>
-                <span className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
-              </Link>
+<Link 
+  href="/post-job"
+  className="group relative overflow-hidden px-5 py-2.5 bg-[#D88A22] text-white font-medium rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-[#D88A22]/20 active:scale-95 hover:bg-[#c07a1b]"
+>
+  <span className="relative z-10 flex items-center justify-center">
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1.5 transition-transform group-hover:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+    </svg>
+    Post a Job
+  </span>
+  <span className="absolute inset-0 bg-white/20 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></span>
+</Link>
               
               <Button 
                 href="/find-jobs" 
