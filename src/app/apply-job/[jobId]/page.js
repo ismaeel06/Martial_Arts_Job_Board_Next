@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import MainLayout from '@/components/layout/MainLayout';
 import Button from '@/components/ui/Button';
@@ -9,6 +9,30 @@ const ApplyJobPage = () => {
   const router = useRouter();
   const params = useParams();
   const jobId = params.jobId;
+
+  // Add this useEffect at the top of the component
+useEffect(() => {
+  const userLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+  const userType = localStorage.getItem('userType');
+  
+  if (!userLoggedIn) {
+    // Not logged in, redirect to login
+    router.replace('/login');
+    return;
+  }
+  
+  if (userType !== 'instructor') {
+    // Logged in but not an instructor, redirect to instructor signup
+    router.replace('/instructor-signup');
+    return;
+  }
+  
+  // User is logged in and is an instructor - allow access
+  setIsLoading(false);
+}, [router]);
+
+// Add loading state at the beginning of the component
+const [isLoading, setIsLoading] = useState(true);
   
   const [loading, setLoading] = useState(false);
   const [generalError, setGeneralError] = useState('');
@@ -231,6 +255,16 @@ const ApplyJobPage = () => {
       </div>
     );
   };
+
+  if (isLoading) {
+  return (
+    <MainLayout>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D88A22]"></div>
+      </div>
+    </MainLayout>
+  );
+}
 
   return (
     <MainLayout>
