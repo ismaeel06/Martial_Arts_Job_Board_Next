@@ -9,38 +9,14 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isEmployer, setIsEmployer] = useState(false); 
-  const [hasPlan, setHasPlan] = useState(false);
+
   const pathname = usePathname();
 
   // Add this new useEffect to check login status
   useEffect(() => {
     // Simple implementation for now
     const userLoggedIn = localStorage.getItem('userLoggedIn');
-    const userType = localStorage.getItem('userType'); // 'employer' or 'instructor'
-    const selectedPlan = localStorage.getItem('selectedPlan'); // 'starter', 'featured', or 'unlimited'
-    
     setIsLoggedIn(userLoggedIn === 'true');
-    setIsEmployer(userType === 'employer');
-    setHasPlan(!!selectedPlan); // Convert to boolean
-    
-    // JWT and Redux implementation (commented out for now)
-    /*
-    // This will be replaced with Redux state management
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Verify token validity here
-      // Get user data from Redux store
-      const userData = store.getState().auth.user;
-      setIsLoggedIn(true);
-      setIsEmployer(userData.type === 'employer');
-      setHasPlan(!!userData.subscription.plan);
-    } else {
-      setIsLoggedIn(false);
-      setIsEmployer(false);
-      setHasPlan(false);
-    }
-    */
   }, []);
 
   useEffect(() => {
@@ -93,9 +69,6 @@ const Header = () => {
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];
-
-    // Determine if Post Job button should be shown
-  const canPostJob = isLoggedIn && isEmployer && hasPlan;
 
   return (
     <header

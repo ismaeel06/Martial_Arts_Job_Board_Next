@@ -7,25 +7,7 @@ import Link from 'next/link';
 
 const HeroSection = () => {
   const [loaded, setLoaded] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isEmployer, setIsEmployer] = useState(false);
-  const [hasPlan, setHasPlan] = useState(false);
 
-    useEffect(() => {
-    setLoaded(true);
-    
-    // Check user status for Post Job button
-    const userLoggedIn = localStorage.getItem('userLoggedIn');
-    const userType = localStorage.getItem('userType');
-    const selectedPlan = localStorage.getItem('selectedPlan');
-    
-    setIsLoggedIn(userLoggedIn === 'true');
-    setIsEmployer(userType === 'employer');
-    setHasPlan(!!selectedPlan);
-  }, []);
-
-    // Determine if user can post jobs
-  const canPostJob = isLoggedIn && isEmployer && hasPlan;
 
   useEffect(() => {
     setLoaded(true);
