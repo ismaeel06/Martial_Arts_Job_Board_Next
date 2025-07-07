@@ -1,13 +1,44 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import Button from '@/components/ui/Button';
-import Image from 'next/image';
+import {useRouter} from 'next/navigation';
 
 const PostJobPage = () => {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedPlan, setSelectedPlan] = useState('featured'); // Default to featured plan
+
+  // Check authentication and permissions on page load
+  useEffect(() => {
+    const userLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+    const userType = localStorage.getItem('userType');
+    const selectedPlan = localStorage.getItem('selectedPlan');
+    
+    if (!userLoggedIn) {
+      // Not logged in, redirect to login
+      router.push('/login');
+      return;
+    }
+    
+    if (userType !== 'employer') {
+      // Logged in but not an employer, redirect to employer signup
+      router.push('/employer-signup');
+      return;
+    }
+    
+    if (!selectedPlan) {
+      // Employer but no plan, redirect to pricing
+      router.push('/pricing');
+      return;
+    }
+    
+    // User is logged in, is an employer, and has a plan - allow access
+    setIsLoading(false);
+  }, [router]);
+
 
   // Current tag input state
   const [currentInput, setCurrentInput] = useState({
@@ -845,6 +876,16 @@ const PostJobPage = () => {
       </div>
     );
   };
+
+    if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#D88A22]"></div>
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>
