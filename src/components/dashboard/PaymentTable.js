@@ -136,7 +136,7 @@ export default function PaymentTable() {
 													key={col.key}
 													className="flex items-center gap-3 px-6 py-4"
 												>
-													<img
+													<image
 														src={payment.user.avatar}
 														alt={payment.user.name}
 														className="w-9 h-9 rounded-full border-2 border-orange-400 shadow"

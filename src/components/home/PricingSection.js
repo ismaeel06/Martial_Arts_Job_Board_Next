@@ -95,7 +95,7 @@ const PricingSection = () => {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">Pricing Plans</h2>
           <div className="h-1 w-24 bg-[#D88A22] mx-auto mb-4"></div>
           <p className="max-w-2xl mx-auto text-gray-600">
-            Choose the perfect plan for your martial arts school's hiring needs
+            Choose the perfect plan for your martial arts school&apos;s hiring needs
           </p>
 
 {/* Urgency Banner */}

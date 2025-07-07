@@ -24,7 +24,7 @@ export default function SignUpTypePage() {
     <div className="min-h-screen bg-gradient-to-br from-[#fff7ed] to-[#f3e8d1] px-4 py-8 flex flex-col items-center">
       {/* Logo and Site Name */}
       <div className="flex flex-col sm:flex-row items-center mb-6 mt-4 gap-3">
-        <img
+        <image
           src={LOGO_SRC}
           alt="Martial Arts Job Board Logo"
           className="h-14 w-14 sm:h-16 sm:w-16"
@@ -39,7 +39,7 @@ export default function SignUpTypePage() {
         <div className="mb-12 text-center">
           <h1 className={`text-3xl font-bold mb-3 ${PRIMARY_COLOR}`}>Choose Your Path</h1>
           <p className="text-gray-500 max-w-2xl mx-auto">
-            Select how you'd like to use the Martial Arts Job Board
+            Select how you&apos;d like to use the Martial Arts Job Board
           </p>
         </div>
 
@@ -65,7 +65,7 @@ export default function SignUpTypePage() {
               </div>
               
               {/* Title */}
-              <h2 className="text-2xl font-bold mb-3">I'm an Instructor</h2>
+              <h2 className="text-2xl font-bold mb-3">I&apos;m an Instructor</h2>
               
               {/* Description */}
               <p className="text-gray-600 mb-6 flex-grow">
@@ -123,7 +123,7 @@ export default function SignUpTypePage() {
               </div>
               
               {/* Title */}
-              <h2 className="text-2xl font-bold mb-3">I'm an Employer</h2>
+              <h2 className="text-2xl font-bold mb-3">I&apos;m an Employer</h2>
               
               {/* Description */}
               <p className="text-gray-600 mb-6 flex-grow">

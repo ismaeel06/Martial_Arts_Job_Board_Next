@@ -927,9 +927,9 @@ const InstructorsPage = () => {
             <span className="inline-block bg-white/30 text-[#b36d19] text-sm px-4 py-1.5 rounded-full font-medium mb-5">
               For Martial Arts Schools
             </span>
-            <h2 className="text-3xl font-bold text-gray-800 mb-3">Can't Find the Right Instructor?</h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-3">Can&apos;t Find the Right Instructor?</h2>
             <p className="text-gray-600 mb-8">
-              Post your job opening on our board and let qualified instructors find you. It's the fastest way to connect with martial arts teaching talent.
+              Post your job opening on our board and let qualified instructors find you. It&apos;s the fastest way to connect with martial arts teaching talent.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 

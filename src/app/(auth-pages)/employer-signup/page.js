@@ -255,7 +255,7 @@ try {
     <div className="min-h-screen bg-gradient-to-br from-[#fff7ed] to-[#f3e8d1] px-2 py-8 flex flex-col items-center">
       {/* Logo and Site Name */}
       <div className="flex flex-col sm:flex-row items-center mb-6 mt-4 gap-3">
-        <img
+        <image
           src={LOGO_SRC}
           alt="Martial Arts Job Board Logo"
           className="h-14 w-14 sm:h-16 sm:w-16"
@@ -353,7 +353,7 @@ try {
         <div className="border-b border-gray-200 pb-6">
           <h2 className={`text-xl font-semibold mb-4 ${PRIMARY_COLOR}`}>Dojo Logo</h2>
           <p className="text-gray-500 text-sm mb-4">
-            Upload your dojo's logo to make your profile more recognizable.
+            Upload your dojo(&apos)s logo to make your profile more recognizable.
           </p>
           
           <div className="flex flex-col md:flex-row gap-6">
@@ -374,7 +374,7 @@ try {
             {/* Logo Preview */}
             {logoFile && (
               <div className="w-full md:w-1/3 bg-gray-50 border border-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
-                <img
+                <image
                   src={URL.createObjectURL(logoFile)}
                   alt="Logo Preview"
                   className="max-h-full max-w-full object-contain p-4"

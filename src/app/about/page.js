@@ -76,7 +76,7 @@ const AboutPage = () => {
                 thriving dojos.
               </p>
               <p className="text-lg text-gray-700">
-                By focusing exclusively on martial arts, we've built a platform that understands 
+                By focusing exclusively on martial arts, we&apos;ve built a platform that understands 
                 the unique needs of school owners and instructors alike, making hiring more 
                 efficient and successful.
               </p>
@@ -113,7 +113,7 @@ const AboutPage = () => {
                       <svg className="w-6 h-6 text-[#D88A22] mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                       </svg>
-                      <p>We've helped over 500 schools find their perfect instructor match</p>
+                      <p>We&apos;ve helped over 500 schools find their perfect instructor match</p>
                     </li>
                     <li className="flex items-start">
                       <svg className="w-6 h-6 text-[#D88A22] mr-3 mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -278,7 +278,7 @@ const AboutPage = () => {
             Ready to Join Our Community?
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-            Whether you're looking to hire top martial arts talent or find your next teaching opportunity, we're here to help.
+            Whether you&apos;re looking to hire top martial arts talent or find your next teaching opportunity, we&apos;re here to help.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button href="/post-job" className="px-8 py-3">

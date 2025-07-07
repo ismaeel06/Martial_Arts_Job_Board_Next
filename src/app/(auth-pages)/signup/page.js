@@ -223,7 +223,7 @@ return (
   <div className="min-h-screen bg-gradient-to-br from-[#fff7ed] to-[#f3e8d1] px-2 py-8 flex flex-col items-center">
     {/* Logo and Site Name */}
     <div className="flex flex-col sm:flex-row items-center mb-6 mt-4 gap-3">
-      <img
+      <image
         src={LOGO_SRC}
         alt="Martial Arts Job Board Logo"
         className="h-14 w-14 sm:h-16 sm:w-16"
@@ -327,7 +327,7 @@ Create your account to start exploring roles in the martial arts industry, or cr
           title="Upload photo"
         >
           {photoPreview ? (
-            <img
+            <image
               src={photoPreview}
               alt="Photo Preview"
               className="w-36 h-36 object-cover rounded-full"
