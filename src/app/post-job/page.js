@@ -34,10 +34,8 @@ const PostJobPage = () => {
   
   // Form state - removed schoolName, schoolLogo, schoolWebsite, schoolSize, schoolDescription
   const [formData, setFormData] = useState({
-    // Step 1: Choose Plan
+
     plan: 'featured',
-    
-    // Step 2: Job Details
     title: '',
     martial_art: '',
     job_type: '',
@@ -265,7 +263,7 @@ const PostJobPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validate step 3 before submission
+    // Validate step 2 before submission
     if (!validateStep3()) {
       return;
     }
@@ -297,13 +295,13 @@ const PostJobPage = () => {
     // });
     
     // Move to confirmation step
-    setCurrentStep(4); // Changed from 5 to 4 since we removed a step
+    setCurrentStep(3); // Changed from 5 to 4 since we removed a step
   };
   
   // Navigation between steps
   const nextStep = () => {
     // If we're on step 2, validate before proceeding
-    if (currentStep === 2) {
+    if (currentStep === 1) {
       if (!validateStep2()) {
         return; // Stop if validation fails
       }
@@ -365,195 +363,8 @@ const PostJobPage = () => {
   // Render the current step
   const renderStep = () => {
     switch(currentStep) {
-      case 1:
-        // Keep Plan selection step as is
-        return (
-          <div className="animate-fade-in">
-            <h2 className="text-2xl font-bold mb-6">Choose Your Plan</h2>
-                              {/* Urgency Banner */}
-    <div className="max-w-3xl mx-auto mb-8 bg-orange-50 border border-orange-200 rounded-lg p-4 shadow-sm">
-      <div className="flex items-center mb-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-orange-500 mr-3 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <span className="text-base font-bold text-gray-900">
-          We are opening enrollment for only 17 Founding Member Schools.
-        </span>
-      </div>
-      <p className="text-sm text-gray-700 ml-9">
-        Lock in lifetime discounted pricing before our national launch. Your rate will never increase as long as you remain active.
-      </p>
-    </div> 
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              {/* Starter Plan */}
-              <div 
-                className={`
-                  border rounded-lg p-6 cursor-pointer transition-all
-                  ${selectedPlan === 'starter' 
-                    ? 'border-[#D88A22] bg-yellow-50 shadow-md' 
-                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                  }
-                `}
-                onClick={() => {
-                  setSelectedPlan('starter');
-                  setFormData(prev => ({ ...prev, plan: 'starter' }));
-                }}
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold">Starter</h3>
-                  <div className="h-6 w-6 rounded-full border-2 flex items-center justify-center">
-                    {selectedPlan === 'starter' && (
-                      <div className="h-3 w-3 bg-[#D88A22] rounded-full"></div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="mb-4">
-                  <span className="text-2xl font-bold">${prices.starter}</span>
-                  <span className="text-gray-500 ml-1">per post</span>
-                </div>
-                
-                <ul className="mb-4 space-y-2">
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">30-day listing</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">Standard visibility</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">Email applications</span>
-                  </li>
-                </ul>
-              </div>
-              
-              {/* Featured Plan */}
-              <div 
-                className={`
-                  border rounded-lg p-6 cursor-pointer transition-all relative
-                  ${selectedPlan === 'featured' 
-                    ? 'border-[#D88A22] bg-yellow-50 shadow-md' 
-                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                  }
-                `}
-                onClick={() => {
-                  setSelectedPlan('featured');
-                  setFormData(prev => ({ ...prev, plan: 'featured' }));
-                }}
-              >
-                <div className="absolute -top-3 right-4 bg-[#D88A22] text-white px-3 py-1 rounded-full text-xs font-bold">
-                  Recommended
-                </div>
-                
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold">Featured</h3>
-                  <div className="h-6 w-6 rounded-full border-2 flex items-center justify-center">
-                    {selectedPlan === 'featured' && (
-                      <div className="h-3 w-3 bg-[#D88A22] rounded-full"></div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="mb-4">
-                  <span className="text-2xl font-bold">${prices.featured}</span>
-                  <span className="text-gray-500 ml-1">per post</span>
-                </div>
-                
-                <ul className="mb-4 space-y-2">
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">60-day listing</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">Featured for 14 days</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">Email + Dashboard</span>
-                  </li>
-                </ul>
-              </div>
-              
-              {/* Unlimited Plan */}
-              <div 
-                className={`
-                  border rounded-lg p-6 cursor-pointer transition-all
-                  ${selectedPlan === 'unlimited' 
-                    ? 'border-[#D88A22] bg-yellow-50 shadow-md' 
-                    : 'border-gray-200 hover:border-gray-300 hover:shadow-sm'
-                  }
-                `}
-                onClick={() => {
-                  setSelectedPlan('unlimited');
-                  setFormData(prev => ({ ...prev, plan: 'unlimited' }));
-                }}
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold">Elite Hiring Pro</h3>
-                  <div className="h-6 w-6 rounded-full border-2 flex items-center justify-center">
-                    {selectedPlan === 'unlimited' && (
-                      <div className="h-3 w-3 bg-[#D88A22] rounded-full"></div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="mb-4">
-                  <span className="text-2xl font-bold">${prices.unlimited}</span>
-                  <span className="text-gray-500 ml-1">/month</span>
-                </div>
-                
-                <ul className="mb-4 space-y-2">
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">Unlimited job posts</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">All Featured benefits</span>
-                  </li>
-                  <li className="flex items-start">
-                    <svg className="w-5 h-5 text-[#D88A22] mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                    <span className="text-sm">Priority support</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            
-            <div className="flex justify-between">
-              <Button 
-                onClick={() => window.location.href = '/'}
-                disabled={currentStep === 1}
-              >
-                Back to Home
-              </Button>
-              <Button onClick={nextStep}>Continue</Button>
-            </div>
-          </div>
-        );
       
-      case 2:
+      case 1:
         // Updated Job Details step with validation
         return (
           <div className="animate-fade-in">
@@ -787,19 +598,18 @@ const PostJobPage = () => {
               </div>
             </div>
             
-            <div className="flex justify-between mt-8">
-              <Button onClick={prevStep}>
-                Back
-              </Button>
-              <Button onClick={nextStep}>
-                Continue
-              </Button>
-            </div>
+<div className="flex justify-between mt-8">
+  <Button onClick={() => window.location.href = '/'}>
+    Back to Home
+  </Button>
+  <Button onClick={nextStep}>
+    Continue
+  </Button>
+</div>
           </div>
         );
       
-      // Case 3 is now Application Settings with validation
-      case 3:
+      case 2:
         return (
           <div className="animate-fade-in">
             <h2 className="text-2xl font-bold mb-6">Application Settings</h2>
@@ -964,8 +774,7 @@ const PostJobPage = () => {
           </div>
         );
         
-      // Success confirmation (previously case 5, now case 4)
-      case 4:
+      case 3:
         return (
           <div className="text-center py-8 animate-fade-in">
             <div className="inline-flex items-center justify-center w-24 h-24 mb-8 bg-green-100 rounded-full">
@@ -1027,13 +836,10 @@ const PostJobPage = () => {
         
         <div className="flex justify-between mt-2 px-1">
           <div className="text-center text-sm">
-            <p className={currentStep >= 1 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Plan</p>
+            <p className={currentStep >= 1 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Job Details</p>
           </div>
           <div className="text-center text-sm">
-            <p className={currentStep >= 2 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Job Details</p>
-          </div>
-          <div className="text-center text-sm">
-            <p className={currentStep >= 3 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Application</p>
+            <p className={currentStep >= 2 ? 'font-medium text-[#D88A22]' : 'text-gray-500'}>Application Details</p>
           </div>
         </div>
       </div>
@@ -1060,8 +866,8 @@ const PostJobPage = () => {
       <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            {currentStep < 4 && (
-              <StepIndicator currentStep={currentStep} totalSteps={3} />
+            {currentStep < 3 && (
+              <StepIndicator currentStep={currentStep} totalSteps={2} />
             )}
             
             <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
