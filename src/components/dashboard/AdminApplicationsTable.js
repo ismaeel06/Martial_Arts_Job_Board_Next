@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Button from '../ui/Button';
-import { FaEye, FaCheck, FaTimes } from 'react-icons/fa';
+import { FaEye, FaCheck, FaTimes, FaTrash } from 'react-icons/fa';
 
 // Mock data for applications
 const applications = [
@@ -165,9 +165,17 @@ export default function AdminApplicationsTable() {
     >
       <FaEye className="mr-1" /> View
     </Button>
+        <Button
+      variant="primary"
+      size="sm"
+      title="Delete Application"
+      className="mx-1"
+    >
+      <FaTrash className="mr-1" /> Delete
+    </Button>
     
     <div className="flex gap-2">
-      <button
+      {/* <button
         onClick={app.status === "Pending" ? () => handleStatusChange(app.id, "Accepted") : undefined}
         className={`p-2 rounded-full ${
           app.status === "Pending" 
@@ -190,7 +198,7 @@ export default function AdminApplicationsTable() {
         disabled={app.status !== "Pending"}
       >
         <FaTimes />
-      </button>
+      </button> */}
     </div>
   </div>
 </td>
