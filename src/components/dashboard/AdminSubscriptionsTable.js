@@ -172,14 +172,14 @@ export default function AdminSubscriptionsTable() {
 
 <td className="px-6 py-4 text-center">
   <div className="flex justify-center items-center gap-2">
-    <Button
+    {/* <Button
       variant="primary"
       size="sm"
       title="View Details"
       className="mx-1"
     >
       <FaEye className="mr-1" /> View
-    </Button>
+    </Button> */}
     
     <div className="flex gap-2">
       {/* Suspend button - shown for Active subscriptions, disabled otherwise */}
