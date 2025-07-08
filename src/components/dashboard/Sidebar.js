@@ -31,7 +31,7 @@ export default function Sidebar() {
 		
 		{ name: role === 'instructor' ? 'My Applications' : role==='school' ? 'Applications Received' : 'Applications', href: role === 'instructor' ? '/dashboard/my-applications' : role==='school'? '/dashboard/admin-applications' : '/dashboard/admin-applications', icon: <FaRegFileAlt className="text-xl" /> },
 		...(role === 'school' || role==='instructor' ? [
-        { name: 'Active Subscriptions', href: '/dashboard/school-subs', icon: <FaMoneyBillWave className="text-xl" /> }
+        { name: 'My Subscriptions', href: '/dashboard/school-subs', icon: <FaMoneyBillWave className="text-xl" /> }
     ] : []),
 		...((role!=='school' && role!== 'instructor') ?[
 			{ name: 'Payments', href: '/dashboard/payments', icon: <FaMoneyBillWave className="text-xl" /> },

@@ -112,7 +112,7 @@ const getStatsByRole = (role) => {
 				link: '/dashboard/admin-applications'
 			},
 			{
-				label: 'Active Subscriptions',
+				label: 'My Subscriptions',
 				value: 2,
 				icon: <FaUserTie className="text-orange-500 text-4xl drop-shadow-lg" />,
 				accent: 'bg-orange-100',

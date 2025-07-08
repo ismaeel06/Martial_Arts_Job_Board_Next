@@ -44,7 +44,7 @@ export default function SchoolSubscriptionsPage() {
     <div className="max-w-full mx-auto px-2 sm:px-4 md:px-8 py-4 w-full">
       <div className="mb-6">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-black tracking-tight mb-2">
-          Active Subscriptions
+          My Subscriptions
         </h1>
         <p className="text-gray-600">
           View and manage your subscription plans for job postings.

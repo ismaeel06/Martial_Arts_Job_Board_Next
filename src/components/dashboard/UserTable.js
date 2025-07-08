@@ -51,7 +51,6 @@ export default function UserTable() {
 			{ key: 'name', label: 'Name' },
 			{ key: 'email', label: 'Email' },
 			{ key: 'role', label: 'Role' },
-			{ key: 'status', label: 'Status' },
 			{ key: 'joined', label: 'Joined' },
 			{ key: 'actions', label: 'Actions', align: 'center' },
 		],
@@ -100,7 +99,6 @@ export default function UserTable() {
 							onChange={e => setSearch(e.target.value)}
 							className="dashboard-search px-4 py-2 border rounded-lg shadow focus:outline-none w-full max-w-xs"
 						/>
-						{role === 'admin' && <Button variant="primary" size="sm" className="ml-4">+ Create User</Button>}
 					</div>
 				)}
 				<div className="overflow-x-auto rounded-2xl shadow-xl bg-white/95 animate-fade-in border border-orange-200">
@@ -166,14 +164,14 @@ export default function UserTable() {
 										}
 										if (col.key === 'actions') {
 											return (
-												<td key={col.key} className="px-6 py-4 text-center flex gap-2 justify-center">
+												<td key={col.key} className="px-6 py-4 text-center flex gap-2 ">
 													<Button
 														variant="primary"
 														size="sm"
-														title="Edit User"
+														title="View User"
 														className="mr-2 min-w-[90px]"
 													>
-														<span className="material-icons align-middle text-base">edit</span>
+														<span className="material-icons align-middle text-base">view</span>
 													</Button>
 													<Button variant="outline" size="sm" title="Delete User" className="min-w-[90px]">
 														<span className="material-icons align-middle text-base">delete</span>
